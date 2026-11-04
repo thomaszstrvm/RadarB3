@@ -33,7 +33,9 @@ def case(setup_runner, public_bundle, monkeypatch, tmp_path):
     for name in op.PINS:
         target = sandbox/name
         target.parent.mkdir(parents=True, exist_ok=True)
-        source = ROOT/name
+        # Operational attestations are host-local; the test already owns fakes.
+        source = {'config/ai-runtime.json': config,
+                  'docs/cli-validation.json': report}.get(name, ROOT/name)
         if source.exists():
             shutil.copyfile(source, target)
         else:
@@ -41,8 +43,6 @@ def case(setup_runner, public_bundle, monkeypatch, tmp_path):
             target.write_text('/next-attempt/rejected-candidate.json\n', encoding='utf-8')
     for source in (ROOT/'schemas').glob('*.json'):
         shutil.copyfile(source, sandbox/'schemas'/source.name)
-    shutil.copyfile(config, sandbox/'config/ai-runtime.json')
-    shutil.copyfile(report, sandbox/'docs/cli-validation.json')
     (sandbox/'prompts/analysis-signal-v1.2.txt').write_text(
         (ROOT/'prompts/analysis-signal-v1.2.txt').read_text(encoding='utf-8')+
         '\nTeste sintético isolado: identifique contrapontos como hipóteses condicionais.\n', encoding='utf-8')
