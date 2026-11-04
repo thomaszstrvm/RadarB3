@@ -217,3 +217,24 @@ it('não restaura detalhe vencido ao trocar de ativo nem reabre o painel após v
   expect(heading()).toBeUndefined();
   expect(rows()).toEqual(pageOne.map(item => item.ticker));
 });
+
+it('mantém preço e sessão junto à empresa no resumo compacto, incluindo ausência', async () => {
+  const original = {...pageOne[0]};
+  try {
+    Object.assign(pageOne[0], {price:12.34,price_session_date:'2026-11-03',price_timestamp_precision:'date',stale:true});
+    await mount();
+    const summaries=container.querySelectorAll('.market-mobile-price');
+    expect(summaries[0].textContent).toContain('12,34');
+    expect(summaries[0].textContent).toContain('Sessão');
+    expect(summaries[0].textContent).toContain('03 de nov. de 2026');
+    expect(summaries[0].textContent).toContain('Defasado');
+    expect(summaries[0].closest('.market-compare-col')).toBeNull();
+    expect(summaries[1].textContent).toBe('Preço não coletado');
+    expect(container.querySelector('.show-comparison')).toBeNull();
+    await click('Mostrar preço e análise');
+    expect(container.querySelector('.show-comparison')).not.toBeNull();
+  } finally {
+    for (const key of Object.keys(pageOne[0])) delete (pageOne[0] as unknown as Record<string,unknown>)[key];
+    Object.assign(pageOne[0],original);
+  }
+});

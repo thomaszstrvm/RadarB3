@@ -47,6 +47,11 @@ function MarketTable({items, selected, open, sort, full}:{items:Asset[];selected
         <td><button className="asset-link" id={'asset-row-'+asset.id} aria-pressed={asset.id===selected}
           aria-label={'Investigar '+asset.ticker} onClick={()=>open(asset.id)}>{asset.ticker}{asset.watchlisted&&<Icon name="star" size={14}/>}</button>
           <span className="company-name">{asset.name}</span>
+          <small className="market-mobile-only market-mobile-price">
+            {asset.price == null ? 'Preço não coletado' : <>Preço: <strong className="numeric">{money(asset.price)}</strong><br/>
+              {asset.price_session_date || asset.price_at ? 'Sessão · ' + priceDate(asset) : 'Sessão não informada'}
+              {asset.stale && <><br/><Badge tone="warning">Defasado</Badge></>}</>}
+          </small>
           <small className="market-compare-col">{asset.type==='unknown'?'Tipo não classificado':label(asset.type)} · {asset.sector||'Setor não classificado'}</small>
         </td>
         <td><strong className="market-count numeric">{asset.event_count==null?'Indisponível':asset.event_count===0?'Sem vínculo':asset.event_count===1?'1 evento':number(asset.event_count)+' eventos'}</strong>
@@ -54,7 +59,6 @@ function MarketTable({items, selected, open, sort, full}:{items:Asset[];selected
           {asset.last_event_seen_date?<small>Descoberto · {date(asset.last_event_seen_date)}</small>
             :asset.last_event_disclosed_date?<small>Divulgação · {date(asset.last_event_disclosed_date)}</small>
             :!!asset.event_count&&<small>Data não informada</small>}
-          {!asset.event_count&&<small className="market-mobile-only">{asset.price_session_date||asset.price_at?'Preço · '+priceDate(asset):'Sem data de preço'}</small>}
         </td>
         <td className="market-compare-col"><strong className="numeric">{money(asset.price)}</strong>
           <small>{asset.price_session_date||asset.price_at?priceDate(asset):'Preço não coletado'}</small>
@@ -154,7 +158,7 @@ export function MarketExplorer({params,change,revision,reload,overview,watchlist
     <ActiveFilterChips params={params} onRemove={key=>{if(key==='search')setDraft('');filter(key,'');}} onClear={clear}/>
     {context}
     {coverage&&<p className="market-universe">{number(coverage.catalog_assets)} no cadastro · {number(coverage.eligible_assets)} elegíveis · {number(coverage.unclassified_assets)} sem classificação</p>}
-    <button className="market-mobile-only text-button" type="button" aria-pressed={full} onClick={()=>setFull(v=>!v)}>{full?'Lista compacta':'Comparar colunas'}</button>
+    <button className="market-mobile-only text-button" type="button" aria-pressed={full} onClick={()=>setFull(v=>!v)}>{full?'Lista compacta':'Mostrar preço e análise'}</button>
     <div className={'market-layout'+(params.asset?' has-selection':' market-wide')}>
       <MarketResults key={path} path={path} revision={revision} reload={reload} watchlist={watchlist} change={updateList} page={page}
         selected={params.asset} sort={sort} active={active} open={open} clear={clear} full={full}/>

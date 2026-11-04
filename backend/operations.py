@@ -78,9 +78,11 @@ def collection_state(store, news_ids):
     sources = store.rows("SELECT provider_id,last_attempt_at,last_success_at,error_code,next_attempt_at FROM provider_state WHERE provider_id<>'codex_cli' ORDER BY provider_id")
     scheduled = calendar_status(store,iso())
     if scheduled is not None:
+        previous = next((item for item in sources if item['provider_id']=='market_calendar'), {})
         sources = [item for item in sources if item['provider_id']!='market_calendar'] + [
-            {'provider_id':'market_calendar','last_attempt_at':None,'last_success_at':scheduled['available_at'],
-             'error_code':scheduled['reason'],'next_attempt_at':None}]
+            {'provider_id':'market_calendar','last_attempt_at':previous.get('last_attempt_at'),'last_success_at':scheduled['available_at'],
+             'error_code':scheduled['error_code'],'next_attempt_at':scheduled['next_attempt_at'],
+             'reason':scheduled['reason'],'details':scheduled['details']}]
     latest_price=latest('price_revisions')
     if store.rows("SELECT 1 FROM sqlite_master WHERE name='price_vintages' AND type='table'"):
         latest_price=max(filter(None,(latest_price,latest('price_vintages'))),default=None)

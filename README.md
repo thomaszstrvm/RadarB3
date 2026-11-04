@@ -2,6 +2,8 @@
 
 Aplicativo local de investigação de eventos e ações/units da B3. API FastAPI, React/TypeScript, SQLite WAL e worker serial com fila durável. Nenhuma corretora, ordem ou serviço pago novo. Interface em português.
 
+**Evolução do código em 04/11/2026:** Mercado mantém modo, executor e cobertura visíveis; Fontes apresenta limites do RSS e motivos em desktop e celular. Contadores elegíveis, cobertura da janela e espera pelo fechamento seguem o [ADR 0017](docs/decisions/0017-cobertura-e-estado-temporal.md). Código atualizado e build candidato não comprovam, por si, que a instância em execução foi reiniciada. Consulte `/api/v1/operations` para o estado dos processos; o diário operacional permanece arquivado localmente.
+
 **Verificação operacional:** consulte `/api/v1/operations` antes de iniciar outra instância. O diário de instalação, coleta e disponibilidade permanece no acervo local; esta versão do README não certifica o estado atual do serviço.
 
 ## Iniciar no PC validado
@@ -86,6 +88,10 @@ O SQLite do Python original era 3.42.0. O projeto carrega **3.54.1** de `vendor/
 `requirements.lock` e `frontend/package-lock.json` fixam dependências; instalação requer internet para os registros oficiais quando não há cache. Nenhuma skill de terceiros foi instalada. Os workflows locais do pacote orientam design e revisão.
 
 ## Testes
+
+O baseline local inclui uma lista revisada de helpers e documentos públicos necessários aos testes em `docs/qa*`. Os demais históricos, bancos, dependências e builds continuam fora do Git. As exclusões adicionais desta instalação estão em `.git/info/exclude`; esse arquivo local não acompanha um clone. Evite adicionar o diretório inteiro sem revisão. `.gitattributes` preserva os bytes dos 34 arquivos da especificação original, inclusive com `core.autocrlf` ativo.
+
+`docs/cli-validation.json` é um atestado operacional local e não faz parte do baseline. A fixture do operador usa configuração e atestado sintéticos desde o início. Para os testes de launcher, prepare também o build frontend; as dependências precisam existir no ambiente de teste. Isso não equivale a uma instalação limpa verificada.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests -q

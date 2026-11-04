@@ -27,3 +27,10 @@ export function isExperimentalSignal(signal?: AnalysisSignal): boolean {
   return signal?.method?.policy_id === 'technical_alignment_v1' && signal.method.experimental === true;
 }
 
+
+Object.assign(labels,{rss_reuse_terms_review_required:'Coleta suspensa: termos de reutilização do RSS aguardam revisão.'});
+Object.assign(labels,{
+  calendar_inconsistent:'Calendário documentado inconsistente; cobertura não confirmada.',
+  calendar_window_unverified:'Calendário sem verificação para toda a janela solicitada.',
+  missing_market_sessions:'Faltam sessões esperadas nesta captura.',
+});

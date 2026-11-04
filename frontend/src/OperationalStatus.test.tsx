@@ -72,6 +72,19 @@ describe('Estado operacional com relógios separados', () => {
     expect(html).not.toContain('Análises pendentes ficam preservadas, aguardando autorização');
   });
 
+  it('prioriza motivo de espera sobre erro histórico sem rotular espera como falha', () => {
+    const data = fixture();
+    data.collection.sources = [{provider_id:'market_calendar',last_attempt_at:null,last_success_at:null,
+      reason:'Aguardando o fechamento da sessão documentada.',error_code:'verified_session_calendar_required',
+      details:{automatic_prices:'waiting_for_close',reason_code:'correction_period_not_ended'},
+      next_attempt_at:'2026-11-04T22:00:01Z'}];
+    const html=renderToStaticMarkup(<OperationalStatus data={data}/>);
+    expect(html).toContain('Estado: Aguardando o fechamento da sessão documentada.');
+    expect(html).toContain('Aguardar até');
+    expect(html).not.toContain('Falha:');
+    expect(html).not.toContain('verified_session_calendar_required');
+  });
+
   it.each(['analyse', 'analysis'])('bloqueia retry %s sem bloquear coleta', kind => {
     const control={allowed_kinds:[kind,'news'],reason:'ready',expires_at:new Date(Date.now()+90_000).toISOString()};
     expect(canRetryJob({kind}, false,'analysis-enabled',control)).toBe(false);

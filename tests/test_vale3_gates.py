@@ -136,14 +136,20 @@ def test_calendar_status_is_derived_without_rewriting_provider_history(store,mon
     store.provider_status('market_calendar','unavailable','verified_session_calendar_required')
     baseline=store.rows('SELECT * FROM provider_state')
     import_one(store)
-    assert calendar_status(store,'2026-10-31T05:30:00Z') is None
+    unavailable=calendar_status(store,'2026-10-31T05:30:00Z')
+    assert unavailable['status']=='unavailable'
+    assert unavailable['error_code']=='calendar_date_unverified'
+    assert unavailable['available_at'] is None
     status=calendar_status(store,CUTOFF)
     assert status['status']=='partial' and status['available_end']=='2026-11-03'
     assert status['details']['provider_finality_certified'] is False
     assert calendar_status(store,'2026-11-04T12:00:00Z')['status']=='unavailable'
     monkeypatch.setattr('backend.operations.iso',lambda: CUTOFF)
     source=next(row for row in collection_state(store,[])['sources'] if row['provider_id']=='market_calendar')
-    assert source['error_code']==status['reason'] and source['last_success_at']==IMPORTED
+    assert source['error_code'] is None
+    assert source['reason']==status['reason']
+    assert source['next_attempt_at']==status['next_attempt_at']
+    assert source['last_success_at']==IMPORTED
     assert store.rows('SELECT * FROM provider_state')==baseline
 
 

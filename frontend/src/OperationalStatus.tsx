@@ -59,7 +59,8 @@ export function OperationalStatus({data, error = ''}: {data?:Operations; error?:
     <details><summary>Última coleta por fonte/conjunto</summary>
       {data.collection.sources.length ? <ul>{data.collection.sources.map(source => <li key={source.provider_id}>
         <strong>{source.provider_id}</strong> · Último sucesso: {date(source.last_success_at, true)} · Última tentativa: {date(source.last_attempt_at, true)}
-        {source.error_code && <span> · Falha: {source.error_code}</span>}
+        {source.reason ? <span> · Estado: {label(source.reason)}</span>
+          : source.error_code && <span> · Falha: {source.error_code}</span>}
         {source.next_attempt_at && <span> · Aguardar até {date(source.next_attempt_at, true)}</span>}
       </li>)}</ul> : <p>Nenhuma tentativa registrada.</p>}
     </details>
