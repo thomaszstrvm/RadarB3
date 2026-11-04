@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.0",
+  "mapping_id": "vale3-earnings-release-3t26-v1",
+  "review_status": "accepted_limited",
+  "review_reference": "chat01a18ada-eab5-7030-a167-2939367bc8bf/turn01a19055-953e-7cb3-9cd1-af4efe011662",
+  "document_type": "earnings_release",
+  "issuer": {
+    "name": "Vale S.A.",
+    "cnpj": "33.592.510/0001-54",
+    "cvm_code": "4170",
+    "registry_url": "https://cvmweb.cvm.gov.br/swb/sistemas/scw/cpublica/ciaab/FormBuscaCiaAbOrdAlf.aspx?LetraInicial=V"
+  },
+  "asset": {
+    "asset_id": "brapi:VALE3",
+    "ticker": "VALE3",
+    "isin": "BRVALEACNOR0",
+    "identity_url": "https://www.vale.com/pt/conheca-nossa-empresa"
+  },
+  "source": {
+    "landing_url": "https://www.vale.com/pt/confira-os-resultados-financeiros-do-3t26/-/categories",
+    "document_url": "https://filemanager-cdn.mziq.com/published/53207d1c-63b4-48f1-96b7-19869fae19fe/d490a890-ba8d-416e-b946-f9d8aa133cb1",
+    "pdf_sha256": "d73d497d329a02e7b98c71ff719f0e8499381a6e8e1e7e850a3073b11b5c3612",
+    "byte_length": 1727017,
+    "page_count": 42,
+    "fetched_at": "2026-10-31T05:02:16.601946Z"
+  },
+  "publication": {
+    "date": "2026-10-29",
+    "precision": "date"
+  },
+  "accounting": {
+    "scope": "consolidated",
+    "basis": "IFRS_simplified_earnings_release",
+    "declaration_page": 20
+  },
+  "observations": [
+    {
+      "account": "net_sales_revenue",
+      "source_label": "Receita de vendas, líquida",
+      "value": "10599",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "quarter",
+        "source_label": "3T26",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 24,
+        "printed_page": 24,
+        "table": "Demonstração de resultado",
+        "column": "3T26"
+      }
+    },
+    {
+      "account": "net_sales_revenue",
+      "source_label": "Receita de vendas, líquida",
+      "value": "30355",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "year_to_date",
+        "source_label": "9M26",
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 24,
+        "printed_page": 24,
+        "table": "Demonstração de resultado",
+        "column": "9M26"
+      }
+    },
+    {
+      "account": "net_income_attributable_to_vale_shareholders",
+      "source_label": "Lucro líquido atribuído aos acionistas da Vale",
+      "value": "1255",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "quarter",
+        "source_label": "3T26",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 24,
+        "printed_page": 24,
+        "table": "Demonstração de resultado",
+        "column": "3T26"
+      }
+    },
+    {
+      "account": "net_income_attributable_to_vale_shareholders",
+      "source_label": "Lucro líquido atribuído aos acionistas da Vale",
+      "value": "4523",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "year_to_date",
+        "source_label": "9M26",
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 24,
+        "printed_page": 24,
+        "table": "Demonstração de resultado",
+        "column": "9M26"
+      }
+    },
+    {
+      "account": "net_cash_from_operating_activities",
+      "source_label": "Caixa líquido gerado pelas atividades operacionais",
+      "value": "2519",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "quarter",
+        "source_label": "3T26",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 26,
+        "printed_page": 26,
+        "table": "Fluxo de Caixa",
+        "column": "3T26"
+      }
+    },
+    {
+      "account": "net_cash_from_operating_activities",
+      "source_label": "Caixa líquido gerado pelas atividades operacionais",
+      "value": "6810",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "year_to_date",
+        "source_label": "9M26",
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "at": null,
+        "normalization": "calendar_labels_v1"
+      },
+      "location": {
+        "pdf_page": 26,
+        "printed_page": 26,
+        "table": "Fluxo de Caixa",
+        "column": "9M26"
+      }
+    },
+    {
+      "account": "cash_and_cash_equivalents",
+      "source_label": "Caixa e equivalentes de caixa",
+      "value": "4841",
+      "missing_reason": null,
+      "currency": "USD",
+      "scale": 1000000,
+      "period": {
+        "kind": "instant",
+        "source_label": "30/9/2026",
+        "start": null,
+        "end": null,
+        "at": "2026-09-30",
+        "normalization": "literal_date"
+      },
+      "location": {
+        "pdf_page": 25,
+        "printed_page": 25,
+        "table": "Balanço patrimonial",
+        "column": "30/9/2026"
+      }
+    }
+  ],
+  "limitations": [
+    "limited_four_accounts_not_complete_fundamentals",
+    "earnings_release_not_audited_itr",
+    "no_directional_readiness",
+    "no_currency_or_scale_conversion"
+  ],
+  "mapping_version": "1.0",
+  "review_role": "development_agent_independent_review"
+}
