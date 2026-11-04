@@ -74,29 +74,77 @@ def calendar_for_bars(store, bars, as_of):
     return calendar_context(store,bars,as_of)[0]
 
 
+def price_session_state(envelope, as_of):
+    """Decide the price gate from one already validated calendar and a cutoff."""
+    cutoff = instant(as_of)
+    day = cutoff.astimezone(SAO_PAULO).date().isoformat()
+    result = {'automatic_prices': 'blocked', 'reason_code': 'calendar_date_unverified',
+              'reason': 'Data fora do calendário verificado; coleta automática de preços suspensa',
+              'session_date': day, 'closes_at': None, 'next_attempt_at': None}
+    sessions = envelope['document']['sessions'] if envelope else []
+    session = next((entry for entry in sessions if entry[0] == day), None)
+    if session is None:
+        return result
+    if not session[1]:
+        return {**result, 'automatic_prices': 'closed_session', 'reason_code': 'closed_session',
+                'reason': 'Dia sem pregão no calendário verificado'}
+    close = instant(session[2])
+    result['closes_at'] = iso(close)
+    if cutoff <= close:
+        return {**result, 'automatic_prices': 'waiting_for_close',
+                'reason_code': 'correction_period_not_ended',
+                'reason': 'Aguardando o fim do período de fechamento e correção dos preços',
+                'next_attempt_at': iso(close + timedelta(seconds=1))}
+    return {**result, 'automatic_prices': 'ready', 'reason_code': None,
+            'reason': 'Sessão encerrada; coleta automática de preços liberada pela agenda'}
+
+
+def price_schedule_state(store, as_of):
+    """Use the same validated, point-in-time gate in both collection launchers."""
+    try:
+        _, envelope = calendar_context(store, [], as_of)
+        return price_session_state(envelope, as_of)
+    except (ValueError, TypeError, KeyError):
+        return {'automatic_prices': 'blocked', 'reason_code': 'calendar_package_inconsistent',
+                'reason': 'Pacote de calendário inconsistente; coleta automática de preços suspensa',
+                'session_date': None, 'closes_at': None, 'next_attempt_at': None}
+
+
 def calendar_status(store, as_of):
     """Derive current limited coverage without rewriting collection history."""
     try:
         _, envelope = calendar_context(store, [], as_of)
+        schedule = price_session_state(envelope, as_of)
     except (ValueError, TypeError, KeyError):
         return {'status':'unavailable','reason':'Pacote de calendário inconsistente; uso recusado',
                 'available_at':None,'available_start':None,'available_end':None,'count':0,
-                'capability':'Cobertura documental não validada','details':{}}
+                'capability':'Cobertura documental não validada',
+                'error_code':'calendar_package_inconsistent','next_attempt_at':None,
+                'details':{'automatic_prices':'blocked','reason_code':'calendar_package_inconsistent',
+                           'session_date':None,'closes_at':None}}
     if envelope is None:
-        return None
+        return {'status':'unavailable','reason':schedule['reason'],
+                'available_at':None,'available_start':None,'available_end':None,'count':0,
+                'capability':'Cobertura documental não validada',
+                'error_code':schedule['reason_code'],'next_attempt_at':None,
+                'details':{key:value for key,value in schedule.items() if key not in {'reason','next_attempt_at'}}}
     document = envelope['document']
     covered = document['start'] <= instant(as_of).astimezone(SAO_PAULO).date().isoformat() <= document['end']
-    reason = f"Calendário programado de ações à vista limitado a {document['start']}–{document['end']}; preços ainda exigem validação independente"
+    reason = (schedule['reason'] + '. ' +
+              f"Calendário programado de ações à vista limitado a {document['start']}–{document['end']}; preços ainda exigem validação independente")
     if not covered:
         reason += '; corte fora da cobertura'
     open_days = sum(row[1] for row in document['sessions'])
     return {'status':'partial' if covered else 'unavailable','reason':reason,
             'available_at':envelope['available_at'],'available_start':document['start'],'available_end':document['end'],
             'count':len(document['sessions']),'capability':f'Dias documentais; {open_days} sessões programadas abertas',
+            'error_code':schedule['reason_code'] if schedule['automatic_prices']=='blocked' else None,
+            'next_attempt_at':schedule['next_attempt_at'],
             'details':{'package_id':envelope['package_id'],'document_sha256':envelope['document_sha256'],
                        'verified_at':document['verified_at'],'available_at':envelope['available_at'],
                        'documented_days':len(document['sessions']),'scheduled_open_days':open_days,
-                       'close_semantics':document['close_semantics'],'provider_finality_certified':False}}
+                       'close_semantics':document['close_semantics'],'provider_finality_certified':False,
+                       **{key:value for key,value in schedule.items() if key not in {'reason','next_attempt_at'}}}}
 
 
 def resolve_calendar_refs(prices, envelope, as_of):

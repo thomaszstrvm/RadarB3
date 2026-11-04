@@ -38,17 +38,42 @@ export function CoverageStats({data, navigate}: {data?: Overview; navigate: Navi
   </section>;
 }
 
-export function MarketCoverage({operations, error, children}: {operations?: Operations; error: string; children: ReactNode}) {
+export function operationHeadline(operations?: Operations, error = ''): string {
+  if (error) return 'Estado operacional sem confirmação · última consulta não renovada';
+  if (!operations) return 'Consultando modo operacional…';
+  if (operations.mode_mismatch) return 'API e executor em modos diferentes · confira o diagnóstico';
+  const worker = operations.worker.status === 'active' ? 'Executor ativo'
+    : operations.worker.status === 'stale' ? 'Executor sem confirmação' : 'Executor ausente';
+  if (operations.execution_mode === 'collection-only') return `Coleta sem IA · IA desativada neste modo · ${worker}`;
+  if (operations.execution_mode === 'manual-analysis') return `Análise manual · ${worker}`;
+  return `Modo com IA · ${operations.ai.enabled ? 'Inferência disponível' : 'Inferência indisponível'} · ${worker}`;
+}
+
+export function MarketCoverage({overview, overviewError = '', operations, error, children}: {
+  overview?: Overview; overviewError?: string; operations?: Operations; error: string; children: ReactNode;
+}) {
   const received = operations?.collection.latest_price_data_at;
-  const status = error ? 'Diagnóstico indisponível'
-    : operations?.mode_mismatch ? 'API e executor em modos diferentes'
-    : operations?.worker.status === 'stale' ? 'Coleta sem confirmação' : '';
-  return <details className="market-context">
-    <summary><strong>Ver cobertura</strong><span className="market-context-clock">
-      {status && <b>{status} · </b>}
-      {received ? 'Último dado de preços recebido em ' + date(received) : operations ? 'Sem dado de preços recebido' : 'Consultando atualização…'}
-    </span></summary>
+  const coverage = overview?.coverage;
+  const presence = (count: number | null | undefined) => count == null || coverage?.eligible_assets == null
+    ? 'Indisponível' : `${number(count)} de ${number(coverage.eligible_assets)}`;
+  return <section aria-label="Modo e cobertura do Mercado">
+    <div className="market-status">
+      <p><strong>{operationHeadline(operations, error)}</strong></p>
+      {operations?.execution_mode === 'collection-only' && <p className="meta">Análises existentes são históricas; uma coleta não as recalcula.</p>}
+      {overviewError && <p className="notice">Cobertura sem atualização confirmada. Valores da última consulta recebida.</p>}
+      <dl className="coverage-presence">
+        <div><dt>Com captura preservada de preços</dt><dd>{presence(coverage?.eligible_assets_with_price_vintages)}</dd></div>
+        <div><dt>Com preços legados</dt><dd>{presence(coverage?.eligible_assets_with_legacy_prices)}</dd></div>
+        <div><dt>Com vínculo de notícia</dt><dd>{presence(coverage?.eligible_assets_with_news)}</dd></div>
+        <div><dt>Com registro de fundamentos</dt><dd>{presence(coverage?.eligible_assets_with_fundamentals)}</dd></div>
+      </dl>
+      <p className="meta">Presença entre ações e units elegíveis; não comprova qualidade ou cobertura do período. Preços legados e capturas podem se sobrepor. Vínculos de notícia podem ser candidatos.</p>
+      <p className="meta">{number(coverage?.unclassified_assets)} ativos ainda sem classificação.</p>
+      <p className="meta">{received ? 'Último dado de preços recebido em ' + date(received, true) : operations ? 'Sem dado de preços recebido' : 'Consultando atualização…'}</p>
+    </div>
+    <details className="market-context">
+    <summary><strong>Ver cobertura</strong><span className="market-context-clock">Contagens e diagnóstico operacional</span></summary>
     {children}
     <OperationalStatus data={operations} error={error}/>
-  </details>;
+  </details></section>;
 }

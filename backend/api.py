@@ -613,7 +613,8 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
                            'details': json.loads(p.get('details_json','{}')), 'count': store.rows('SELECT COUNT(*) n FROM articles WHERE source_id=?',(s['id'],))[0]['n']})
             if s['id']=='market_calendar' and scheduled is not None:
                 result[-1].update({key:scheduled[key] for key in ('status','reason','details','available_start','available_end','count','capability')})
-                result[-1].update(error=scheduled['reason'],last_success_at=scheduled['available_at'],next_attempt_at=None)
+                result[-1].update(error=scheduled['error_code'],last_success_at=scheduled['available_at'],
+                                  next_attempt_at=scheduled['next_attempt_at'])
             if s['id']=='brapi_prices' and captured is not None:
                 result[-1].update(captured)
         return {'items': result, 'as_of': iso()}

@@ -1,0 +1,30 @@
+.mobile-menu-toggle { display: none; }
+.market-status { border-bottom: 1px solid var(--color-border); padding-block: .75rem; margin-bottom: .75rem; overflow-wrap: anywhere; }
+.market-status p { margin-bottom: .5rem; }
+.coverage-presence { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: .5rem 0; }
+.coverage-presence > div { flex: 1 1 12rem; }
+.coverage-presence dt { color: var(--color-text-muted); font-size: .875rem; }
+.coverage-presence dd { margin: .15rem 0 0; font-weight: 600; }
+.source-limitation { max-width: 65ch; overflow-wrap: anywhere; }
+.source-mobile { display: none; }
+.source-diagnostics pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.window-coverage { overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .sidebar .main-navigation { width: 100%; min-width: 0; }
+  .sidebar .mobile-menu-toggle { display: flex; width: 100%; justify-content: space-between; text-align: left; white-space: normal; }
+  .sidebar nav.navigation-links { display: none; }
+  .sidebar nav.navigation-links.is-open { display: flex; flex-direction: column; overflow: visible; width: 100%; }
+  .sidebar .navigation-links .nav-item { width: 100%; white-space: normal; min-height: 44px; }
+  .coverage-presence { gap: .6rem; }
+  .coverage-presence > div { flex-basis: 100%; }
+  .market-status .meta, .source-mobile .meta, .source-mobile small { font-size: .875rem; }
+  .source-desktop { display: none; }
+  .source-mobile { display: block; }
+  .source-mobile article { border-bottom: 1px solid var(--color-border); padding-block: 1rem; overflow-wrap: anywhere; }
+  .source-mobile h3 { margin-bottom: .5rem; }
+  .source-mobile dl { margin: .75rem 0; }
+  .source-mobile dt { color: var(--color-text-muted); }
+  .source-mobile dd { margin: 0 0 .5rem; }
+  .sources-heading { flex-wrap: wrap; }
+  .sources-heading > * { min-width: 0; }
+}

@@ -5,7 +5,7 @@ nor a verified investor total-return methodology. No network or AI lives here.
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import json
 import math
@@ -258,6 +258,49 @@ def adjusted_metrics(normalized, calendar_envelope, as_of, evidence_id):
     return result
 
 
+def window_coverage(normalized, calendar_envelope, as_of):
+    """Describe temporal presence in one capture, not financial adequacy.
+
+    Current calendar knowledge can explain a gap without rewriting the calendar
+    frozen with the capture or changing the periods used by its metrics.
+    """
+    start, end = news_window(as_of)
+    cutoff = instant(as_of)
+    lower = instant(start).astimezone(SAO_PAULO).date()
+    upper = instant(end).astimezone(SAO_PAULO).date()
+    observed = {bar['session_date'] for bar in normalized['bars']
+                if lower.isoformat() <= bar['session_date'] <= upper.isoformat()
+                and bar['complete_session']}
+    result = {'requested_start': lower.isoformat(), 'requested_end': upper.isoformat(),
+              'expected_last_session': None,
+              'observed_start': min(observed, default=None),
+              'observed_end': max(observed, default=None),
+              'expected_sessions': None, 'observed_sessions': len(observed),
+              'missing_sessions': [], 'status': 'unknown', 'reason': 'calendar_unverified'}
+    if calendar_envelope is None:
+        return result
+    try:
+        rows = validate_package_envelope(calendar_envelope, as_of)
+    except (ValueError, TypeError, KeyError, OverflowError):
+        return {**result, 'reason': 'calendar_inconsistent'}
+    scheduled = {row['session_date']: row for row in rows}
+    required = [(lower + timedelta(days=offset)).isoformat()
+                for offset in range((upper - lower).days + 1)]
+    if any(day not in scheduled for day in required):
+        return {**result, 'reason': 'calendar_window_unverified'}
+    expected = {day for day in required if scheduled[day]['is_open']
+                and instant(scheduled[day]['closes_at']) < cutoff}
+    # A date present before its correction period ended is not a closed session.
+    observed &= expected
+    missing = sorted(expected - observed)
+    return {**result, 'expected_last_session': max(expected, default=None),
+            'observed_start': min(observed, default=None),
+            'observed_end': max(observed, default=None),
+            'expected_sessions': len(expected), 'observed_sessions': len(observed),
+            'missing_sessions': missing, 'status': 'partial' if missing else 'complete',
+            'reason': 'missing_market_sessions' if missing else None}
+
+
 def price_projection(store,asset,as_of):
     """Read-only daily UI projection; close and A retain distinct meanings."""
     selected=selected_vintage(store,asset,as_of)
@@ -269,8 +312,16 @@ def price_projection(store,asset,as_of):
            'adjusted_close_basis':PRICE_BASIS,'vintage_id':selected['vintage_id']}
           for bar in selected['normalized']['bars'] if lower<=bar['session_date']<=upper]
     metrics=adjusted_metrics(selected['normalized'],json.loads(selected['calendar_json']),as_of,selected['vintage_id'])
-    return {'bars':bars,'metrics':metrics,'snapshot':{key:selected[key] for key in
-            ('vintage_id','fetched_at','latest_capture_at','available_at','response_sha256','policy_sha256')},
+    try:
+        _, current_calendar = calendar_context(store, [], as_of)
+        coverage = window_coverage(selected['normalized'], current_calendar, as_of)
+    except (ValueError, TypeError, KeyError, OverflowError):
+        coverage = {**window_coverage(selected['normalized'], None, as_of),
+                    'reason': 'calendar_inconsistent'}
+    snapshot = {key:selected[key] for key in
+                ('vintage_id','fetched_at','latest_capture_at','available_at','response_sha256','policy_sha256')}
+    snapshot['window_coverage'] = coverage
+    return {'bars':bars,'metrics':metrics,'snapshot':snapshot,
             'policy_id':POLICY['policy_id'],'subject_to_revision':True}
 
 

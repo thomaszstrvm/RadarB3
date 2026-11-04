@@ -13,24 +13,14 @@ from uuid import uuid4
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from backend.core import Conflict, Store, wal_supported
-from backend.session_continuity import calendar_context
+from backend.session_continuity import price_schedule_state
 from backend.timeutil import SAO_PAULO, instant, iso
 from backend.worker import Worker
 from scripts.collect_once import TERMINAL, existing_profile
 
 
 def price_skip_reason(store, now):
-    day = now.astimezone(SAO_PAULO).date().isoformat()
-    _, package = calendar_context(store, [], now)
-    sessions = package['document']['sessions'] if package else []
-    session = next((entry for entry in sessions if entry[0] == day), None)
-    if not session:
-        return 'calendar_date_unverified'
-    if not session[1]:
-        return 'closed_session'
-    if now <= instant(session[2]):
-        return 'correction_period_not_ended'
-    return None
+    return price_schedule_state(store, now)['reason_code']
 
 
 def daily_plan(store, now):
@@ -142,7 +132,7 @@ def collect_daily(store, *, as_of=None, timeout=1200, worker_factory=Worker):
         status = 'succeeded'
         if pending or any(job['status'] not in {'succeeded', 'partial'} for job in jobs):
             status = 'incomplete'
-        elif any(job['status'] == 'partial' for job in jobs) or skipped.get('prices') == 'calendar_date_unverified':
+        elif any(job['status'] == 'partial' for job in jobs) or skipped.get('prices') in {'calendar_date_unverified', 'calendar_package_inconsistent'}:
             status = 'partial'
         return {'local_date': now.astimezone(SAO_PAULO).date().isoformat(), 'started_at': iso(now),
                 'finished_at': iso(), 'execution_mode': 'collection-only', 'status': status,

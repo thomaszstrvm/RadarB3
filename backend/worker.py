@@ -21,6 +21,7 @@ from .ingest import build_event
 from .safe_http import FetchError
 from .timeutil import SAO_PAULO, UTC, instant, iso, news_window
 from .execution_mode import resolve_mode, ANALYSIS_KINDS, MODES
+from .session_continuity import calendar_status
 
 
 class Cancelled(RuntimeError):
@@ -151,11 +152,20 @@ class Worker:
         # Price automatic jobs require an explicitly verified exchange session.
         day = now.astimezone(SAO_PAULO).date().isoformat()
         self.store.enqueue("macro", {"as_of": iso(now)}, "schedule:macro:" + day, priority=40)
-        sessions = self.store.rows("SELECT * FROM market_sessions WHERE session_date=? AND is_open=1 AND closes_at<=?", (day, iso(now)))
-        if sessions:
+        calendar = calendar_status(self.store, iso(now))
+        if calendar['details']['automatic_prices'] == 'ready':
             self.store.enqueue("prices", {"as_of": iso(now)}, "schedule:prices:" + day, priority=40)
-        else:
-            self.store.provider_status("market_calendar", "unavailable", "verified_session_calendar_required", {"automatic_prices": "paused", "manual_price_fetch": "available"})
+        # A scheduling decision is not a provider attempt or successful collection.
+        # Keep those clocks unchanged while clearing obsolete errors on transitions.
+        with self.store.transaction() as con:
+            con.execute("""INSERT INTO provider_state
+                (provider_id,status,last_attempt_at,last_success_at,error_code,next_attempt_at,details_json)
+                VALUES('market_calendar',?,NULL,NULL,?,?,?)
+                ON CONFLICT(provider_id) DO UPDATE SET status=excluded.status,
+                error_code=excluded.error_code,next_attempt_at=excluded.next_attempt_at,
+                details_json=excluded.details_json""",
+                (calendar['status'], calendar['error_code'], calendar['next_attempt_at'],
+                 dumps({**calendar['details'], 'manual_price_fetch': 'available'})))
         if self.execution_mode == 'analysis-enabled':
             schedule_analyses(self.store, self.config_dir / "ai-runtime.json", self.config_dir.parent / "docs" / "cli-validation.json", iso(now))
 

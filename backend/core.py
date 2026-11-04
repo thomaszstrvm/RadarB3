@@ -6,7 +6,7 @@ import random
 import sqlite3
 import time
 import uuid
-from contextlib import contextmanager, nullcontext
+from contextlib import closing, contextmanager, nullcontext
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -324,12 +324,39 @@ class Store:
         return self.rows("SELECT a.*,r.* FROM articles a JOIN article_revisions r ON r.revision_id=a.latest_revision_id ORDER BY r.published_at DESC,a.article_id LIMIT ?", (limit,))
 
     def coverage(self):
-        with self.connect() as con:
+        # Numerators and their eligible denominator share one read snapshot.
+        with closing(self.connect()) as con:
+            con.execute('BEGIN')
             count = lambda q: con.execute(q).fetchone()[0]
+            tables = {row[0] for row in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+
+            def eligible_with_records(table):
+                if table not in tables:
+                    return None
+                # Table names below are fixed by the application, never API input.
+                return count(f"SELECT COUNT(*) FROM assets a WHERE a.eligible=1 AND EXISTS "
+                             f"(SELECT 1 FROM {table} records WHERE records.asset_id=a.asset_id)")
+
             priced='SELECT asset_id FROM price_bars'
-            if count("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='price_vintages'"):
+            if 'price_vintages' in tables:
                 priced+=' UNION SELECT asset_id FROM price_vintages'
-            return {"catalog_assets": count("SELECT COUNT(*) FROM assets"), "eligible_assets": count("SELECT COUNT(*) FROM assets WHERE eligible=1"), "unclassified_assets": count("SELECT COUNT(*) FROM assets WHERE asset_type='unknown'"), "assets_with_prices": count('SELECT COUNT(DISTINCT asset_id) FROM ('+priced+')'), "assets_with_news": count("SELECT COUNT(DISTINCT asset_id) FROM event_asset_links"), "assets_analyzed": count("SELECT COUNT(DISTINCT asset_id) FROM analyses"), "articles": count("SELECT COUNT(*) FROM articles"), "events": count("SELECT COUNT(*) FROM events"), "truncated_queries_count": count("SELECT COUNT(*) FROM coverage_partitions WHERE truncated=1"), "profile": self.profile, "sqlite_version": sqlite3.sqlite_version, "journal_mode": con.execute("PRAGMA journal_mode").fetchone()[0]}
+            return {
+                "catalog_assets": count("SELECT COUNT(*) FROM assets"),
+                "eligible_assets": count("SELECT COUNT(*) FROM assets WHERE eligible=1"),
+                "unclassified_assets": count("SELECT COUNT(*) FROM assets WHERE asset_type='unknown'"),
+                "assets_with_prices": count('SELECT COUNT(DISTINCT asset_id) FROM ('+priced+')'),
+                "assets_with_news": count("SELECT COUNT(DISTINCT asset_id) FROM event_asset_links"),
+                "eligible_assets_with_price_vintages": eligible_with_records('price_vintages'),
+                "eligible_assets_with_legacy_prices": eligible_with_records('price_bars'),
+                "eligible_assets_with_news": eligible_with_records('event_asset_links'),
+                "eligible_assets_with_fundamentals": eligible_with_records('fundamental_releases'),
+                "assets_analyzed": count("SELECT COUNT(DISTINCT asset_id) FROM analyses"),
+                "articles": count("SELECT COUNT(*) FROM articles"),
+                "events": count("SELECT COUNT(*) FROM events"),
+                "truncated_queries_count": count("SELECT COUNT(*) FROM coverage_partitions WHERE truncated=1"),
+                "profile": self.profile, "sqlite_version": sqlite3.sqlite_version,
+                "journal_mode": con.execute("PRAGMA journal_mode").fetchone()[0],
+            }
 
     def backup(self, destination: str | Path):
         target = Path(destination).resolve()
