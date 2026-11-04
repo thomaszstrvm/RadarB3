@@ -1,0 +1,37 @@
+.market-explorer .filters { margin-bottom: 8px; }
+.market-shortcuts { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
+.market-shortcuts button { padding: 5px 2px; border: 0; border-radius: 0; background: transparent; min-height: 40px; color: var(--color-action); font-size: .8125rem; }
+.market-shortcuts button[aria-pressed="true"] { box-shadow: inset 0 -2px var(--color-action); font-weight: 650; }
+.market-shortcuts button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.market-universe { font-size: .8125rem; color: var(--color-text-muted); margin: 4px 0 8px; }
+.market-explorer .market-wide { grid-template-columns: minmax(0, 1fr); }
+.market-explorer .market-table { width: 100%; min-width: 600px; }
+.market-explorer .market-table th { font-size: .75rem; letter-spacing: .025em; }
+.market-explorer .market-table td { height: auto; padding: 10px 12px; }
+.market-explorer .market-table .company-name { display: block; margin: 0; font-size: .8125rem; overflow-wrap: anywhere; }
+.market-explorer .market-table td:first-child small { margin-top: 3px; font-size: .75rem; }
+.market-explorer .market-table td:first-child { min-width: 138px; }
+.market-explorer .market-table td:nth-child(2) { max-width: none; }
+.market-explorer .market-table td:nth-child(3) { min-width: 104px; }
+.market-explorer .market-table small { display: block; font-size: .75rem; }
+.market-explorer .market-table .asset-link { min-height: 36px; }
+.market-explorer .market-count { font-weight: 550; }
+.market-explorer .market-table small.market-event-title {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; max-width: 50ch; overflow-wrap: anywhere; color: var(--color-text);
+}
+.market-explorer .market-mobile-only, .market-explorer .market-table small.market-mobile-only { display: none; }
+@media (max-width: 640px) {
+  .market-explorer .filters { margin-bottom: 2px; }
+  .market-shortcuts { column-gap: 9px; }
+  .market-shortcuts button { min-height: 44px; }
+  .market-explorer > button.market-mobile-only { display: inline-flex; min-height: 44px; }
+  .market-explorer .market-universe { font-size: .75rem; }
+  .market-explorer .market-table-wrap:not(.show-comparison) .market-table { min-width: 0; table-layout: fixed; }
+  .market-explorer .market-table-wrap:not(.show-comparison) .market-compare-col { display: none; }
+  .market-explorer .market-table-wrap:not(.show-comparison) :is(th,td) { min-width: 0; width: 47%; padding: 8px 10px; }
+  .market-explorer .market-table-wrap:not(.show-comparison) :is(th,td):first-child { width: 53%; }
+  .market-explorer .market-table-wrap:not(.show-comparison) .market-mobile-only { display: block; }
+  .market-explorer .market-table .asset-link { min-height: 44px; }
+  .market-explorer .market-table .company-name { font-size: .8125rem; }
+}

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Radar B3 normalized event v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "event_version": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "macro",
+        "earnings",
+        "corporate_action",
+        "regulation",
+        "geopolitics",
+        "commodity",
+        "climate",
+        "technology",
+        "other"
+      ]
+    },
+    "event_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "first_disclosed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "first_seen_at": {
+      "type": "string"
+    },
+    "timestamp_precision": {
+      "type": "string",
+      "enum": [
+        "instant",
+        "date",
+        "unknown"
+      ]
+    },
+    "asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sector_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string"
+          },
+          "link_type": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "indirect",
+              "candidate"
+            ]
+          },
+          "mechanism": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "entity_id",
+          "link_type",
+          "mechanism",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "novelty": {
+      "type": "string",
+      "enum": [
+        "new_fact",
+        "material_revision",
+        "republication",
+        "unknown"
+      ]
+    },
+    "supersedes_event_version": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "quality_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_version",
+    "title",
+    "event_type",
+    "event_date",
+    "first_disclosed_at",
+    "first_seen_at",
+    "timestamp_precision",
+    "asset_ids",
+    "sector_ids",
+    "evidence_ids",
+    "links",
+    "novelty",
+    "supersedes_event_version",
+    "quality_flags"
+  ],
+  "additionalProperties": false
+}

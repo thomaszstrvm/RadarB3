@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "bundle_id": "demo-bundle-001",
+  "as_of": "2026-10-26T12:00:00Z",
+  "asset": {
+    "asset_id": "demo-company-stock",
+    "ticker": "DEMO3",
+    "name": "Companhia Exemplo Fictícia",
+    "asset_type": "stock",
+    "currency": "BRL",
+    "sector": "Setor fictício"
+  },
+  "window": {
+    "start": "2026-07-26T03:00:00Z",
+    "end": "2026-10-26T12:00:00Z",
+    "lookback_calendar_months": 3,
+    "timezone": "America/Sao_Paulo"
+  },
+  "forecast_horizons_days": [
+    30,
+    90
+  ],
+  "evidence": [
+    {
+      "evidence_id": "demo-e-001",
+      "record_type": "article",
+      "source_id": "demo_source",
+      "url": "https://example.invalid/demo-news",
+      "title": "EXEMPLO FICTÍCIO: governo anuncia mudança de tarifa sobre insumo industrial.",
+      "content": "EXEMPLO FICTÍCIO: governo anuncia mudança de tarifa sobre insumo industrial.",
+      "content_sha256": "d28041065d3f0328e2f3e4c0c1b9678d1078afaf74ae43091e5fe050f4ea91d5",
+      "access_level": "headline_only",
+      "published_at": "2026-10-25T12:00:00Z",
+      "modified_at": null,
+      "first_seen_at": "2026-10-26T11:00:00Z",
+      "fetched_at": "2026-10-26T11:00:00Z",
+      "market_timestamp": null,
+      "timestamp_precision": "instant",
+      "publisher_group": "demo",
+      "original_publisher": "demo",
+      "entity_ids": [],
+      "quality_flags": [
+        "synthetic_example",
+        "headline_only",
+        "company_exposure_unverified"
+      ],
+      "available_at": "2026-10-26T11:00:00Z"
+    }
+  ],
+  "computed_metrics": [
+    {
+      "metric_id": "return_21_sessions",
+      "label": "Variação em 21 pregões",
+      "value": null,
+      "unit": "fraction",
+      "start_at": null,
+      "end_at": null,
+      "formula_version": "price_return_v1",
+      "adjustment": "unknown",
+      "evidence_ids": [],
+      "missing_reason": "synthetic_example_has_no_price_series",
+      "evidence_id": null
+    }
+  ],
+  "coverage": {
+    "eligible_assets": 1,
+    "assets_with_recent_prices": 0,
+    "editorial_sources_selected": 8,
+    "editorial_sources_reached": 0,
+    "full_text_count": 0,
+    "partial_text_count": 1,
+    "truncated_queries_count": 0,
+    "known_gaps": [
+      "Exemplo sintético; nenhum portal real foi consultado.",
+      "Exposição econômica e série de preço ausentes."
+    ]
+  },
+  "quality_flags": [
+    "synthetic_example",
+    "insufficient_market_data"
+  ]
+}

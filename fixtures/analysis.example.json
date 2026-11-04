@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "analysis_id": "demo-analysis-001",
+  "as_of": "2026-10-26T12:00:00Z",
+  "asset_id": "demo-company-stock",
+  "status": "insufficient_data",
+  "synthesis": "Exemplo fictício: a manchete sozinha não permite avaliar o impacto na companhia ou uma oportunidade.",
+  "claims": [
+    {
+      "kind": "fact",
+      "statement": "A manchete sintética menciona uma mudança de tarifa sobre um insumo industrial.",
+      "evidence_ids": [
+        "demo-e-001"
+      ]
+    }
+  ],
+  "scenarios": [],
+  "opportunity": {
+    "classification": "insufficient_data",
+    "rationale": "Faltam o texto da medida, a exposição da empresa e uma série comparável de preços.",
+    "evidence_ids": [
+      "demo-e-001"
+    ]
+  },
+  "risks": [
+    "Não é possível saber a direção ou magnitude do efeito apenas pela manchete."
+  ],
+  "missing_evidence": [
+    "Texto e vigência da medida",
+    "Exposição documentada da companhia",
+    "Preços comparáveis e fundamentos"
+  ],
+  "data_quality_flags": [
+    "synthetic_example",
+    "headline_only",
+    "company_exposure_unverified",
+    "insufficient_market_data"
+  ],
+  "evidence_ids": [
+    "demo-e-001"
+  ]
+}

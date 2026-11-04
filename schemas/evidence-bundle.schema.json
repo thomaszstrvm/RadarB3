@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Radar B3 evidence bundle v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "bundle_id": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string"
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "asset_type": {
+          "type": "string",
+          "enum": [
+            "stock",
+            "unit"
+          ]
+        },
+        "currency": {
+          "type": "string"
+        },
+        "sector": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "asset_id",
+        "ticker",
+        "name",
+        "asset_type",
+        "currency",
+        "sector"
+      ],
+      "additionalProperties": false
+    },
+    "window": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "type": "string"
+        },
+        "lookback_calendar_months": {
+          "type": "integer"
+        },
+        "timezone": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "lookback_calendar_months",
+        "timezone"
+      ],
+      "additionalProperties": false
+    },
+    "forecast_horizons_days": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence_id": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string",
+            "enum": [
+              "article",
+              "filing",
+              "price",
+              "macro",
+              "computed_metric",
+              "exposure"
+            ]
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "content_sha256": {
+            "type": "string"
+          },
+          "access_level": {
+            "type": "string",
+            "enum": [
+              "headline_only",
+              "excerpt",
+              "full_text",
+              "structured"
+            ]
+          },
+          "published_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "modified_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "first_seen_at": {
+            "type": "string"
+          },
+          "fetched_at": {
+            "type": "string"
+          },
+          "market_timestamp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timestamp_precision": {
+            "type": "string",
+            "enum": [
+              "instant",
+              "date",
+              "unknown"
+            ]
+          },
+          "publisher_group": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original_publisher": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "quality_flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "available_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "record_type",
+          "source_id",
+          "url",
+          "title",
+          "content",
+          "content_sha256",
+          "access_level",
+          "published_at",
+          "modified_at",
+          "first_seen_at",
+          "fetched_at",
+          "market_timestamp",
+          "timestamp_precision",
+          "publisher_group",
+          "original_publisher",
+          "entity_ids",
+          "quality_flags",
+          "available_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "computed_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric_id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "start_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "end_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "formula_version": {
+            "type": "string"
+          },
+          "adjustment": {
+            "type": "string",
+            "enum": [
+              "raw",
+              "split_adjusted",
+              "total_return",
+              "unknown",
+              "not_applicable"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "metric_id",
+          "label",
+          "value",
+          "unit",
+          "start_at",
+          "end_at",
+          "formula_version",
+          "adjustment",
+          "evidence_ids",
+          "missing_reason",
+          "evidence_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "eligible_assets": {
+          "type": "integer"
+        },
+        "assets_with_recent_prices": {
+          "type": "integer"
+        },
+        "editorial_sources_selected": {
+          "type": "integer"
+        },
+        "editorial_sources_reached": {
+          "type": "integer"
+        },
+        "full_text_count": {
+          "type": "integer"
+        },
+        "partial_text_count": {
+          "type": "integer"
+        },
+        "truncated_queries_count": {
+          "type": "integer"
+        },
+        "known_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "eligible_assets",
+        "assets_with_recent_prices",
+        "editorial_sources_selected",
+        "editorial_sources_reached",
+        "full_text_count",
+        "partial_text_count",
+        "truncated_queries_count",
+        "known_gaps"
+      ],
+      "additionalProperties": false
+    },
+    "quality_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "as_of",
+    "asset",
+    "window",
+    "forecast_horizons_days",
+    "evidence",
+    "computed_metrics",
+    "coverage",
+    "quality_flags"
+  ],
+  "additionalProperties": false
+}

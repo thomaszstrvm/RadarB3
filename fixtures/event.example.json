@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "event_id": "demo-event-001",
+  "event_version": 1,
+  "title": "Mudança tarifária fictícia",
+  "event_type": "regulation",
+  "event_date": null,
+  "first_disclosed_at": null,
+  "first_seen_at": "2026-10-26T11:00:00Z",
+  "timestamp_precision": "unknown",
+  "asset_ids": [],
+  "sector_ids": [],
+  "evidence_ids": [
+    "demo-e-001"
+  ],
+  "links": [
+    {
+      "entity_id": "demo-company-stock",
+      "link_type": "candidate",
+      "mechanism": "Possível uso do insumo; exposição não confirmada.",
+      "evidence_ids": [
+        "demo-e-001"
+      ]
+    }
+  ],
+  "novelty": "unknown",
+  "supersedes_event_version": null,
+  "quality_flags": [
+    "synthetic_example",
+    "company_exposure_unverified"
+  ]
+}

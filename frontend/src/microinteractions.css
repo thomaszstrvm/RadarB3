@@ -1,0 +1,49 @@
+/* Original CSS: short, state-driven feedback; content remains usable without motion. */
+.micro-control{transition-property:background-color,border-color,color;transition-duration:var(--duration-fast);transition-timing-function:cubic-bezier(.16,1,.3,1)}
+.micro-control:not([aria-disabled="true"]):active{background-color:var(--color-action-soft)}
+.tracking-status{display:flex;align-items:flex-start;gap:8px}
+.tracking-symbol{display:inline-flex;flex:0 0 20px;width:20px;height:20px;align-items:center;justify-content:center;color:var(--color-text-muted)}
+.tracking-symbol[data-kind="complete"]{color:var(--color-info)}
+.tracking-symbol[data-kind="attention"]{color:var(--color-warning)}
+.favorite-control{display:inline-flex;min-width:0}
+.favorite-button{min-height:44px;max-width:100%;gap:6px}
+.favorite-symbol{display:inline-flex;flex:0 0 18px;color:var(--color-text-muted)}
+.favorite-symbol svg{fill:transparent;transition:fill var(--duration-normal) ease-out,color var(--duration-fast) ease-out}
+.favorite-symbol[data-saved="true"]{color:var(--color-action)}
+.favorite-symbol[data-saved="true"] svg{fill:var(--color-action-soft)}
+.favorite-feedback{display:inline-block;inline-size:10ch;flex-shrink:0;color:var(--color-text-muted);font-size:12px;text-align:left}
+.evidence-disclosure summary{min-height:44px;transition:color var(--duration-fast) ease-out}
+.evidence-disclosure summary:is(:hover,:focus-visible){color:var(--color-action-hover)}
+.evidence-disclosure summary::marker{color:var(--color-action)}
+.evidence-disclosure[open] summary{margin-bottom:8px}
+.motion-preferences{margin-bottom:24px}
+.motion-preferences label{display:flex;flex-direction:column;gap:8px;max-width:28rem}
+.motion-preferences select{max-width:100%}
+.filter-chips{flex-wrap:wrap;justify-content:flex-start;gap:8px}
+.filter-chip{min-height:44px;max-width:100%;gap:6px;background:var(--color-action-soft);color:var(--color-action);border-color:var(--color-border);text-align:left}
+.filter-chip span{min-width:0;overflow-wrap:anywhere}
+.filter-chip svg{flex-shrink:0}
+.filter-chip:is(:hover,:focus-visible){border-color:var(--color-action)}
+
+@media(prefers-reduced-motion:no-preference){
+  /* Keys change only with semantic state, not with each polling timestamp. */
+  .tracking-symbol{animation:radar-state-arrival var(--duration-normal) cubic-bezier(.16,1,.3,1) both}
+  .tracking-symbol[data-kind="complete"] path{stroke-dasharray:24;animation:radar-check var(--duration-normal) ease-out both}
+  .evidence-disclosure[open]>.evidence-content{animation:radar-evidence-reveal var(--duration-normal) ease-out both}
+  .nav-item,.asset-table tbody tr{transition:background-color var(--duration-fast) ease-out,color var(--duration-fast) ease-out}
+  .expanded-filters{animation:radar-evidence-reveal var(--duration-fast) ease-out both}
+  @keyframes radar-state-arrival{from{opacity:.45}to{opacity:1}}
+  @keyframes radar-check{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+  @keyframes radar-evidence-reveal{from{opacity:.7}to{opacity:1}}
+}
+@media(prefers-reduced-motion:reduce){
+  .micro-control,.favorite-symbol svg,.evidence-disclosure summary{transition:none}
+  .tracking-symbol,.tracking-symbol path,.evidence-content{animation:none}
+}
+/* The local opt-out only reduces motion; it never overrides the OS's reduce preference. */
+:root[data-motion="reduce"]{--duration-fast:0ms;--duration-normal:0ms}
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+.mutation-recovery{display:block;overflow-wrap:anywhere}.mutation-recovery h2{margin:0 0 .5rem;font-size:1.125rem}.mutation-recovery p{margin:.5rem 0}.mutation-recovery .row{margin-block:.75rem}

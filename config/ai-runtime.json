@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "automatic_analysis": true,
+  "model": "gpt-6-astra",
+  "timeout_seconds": 300,
+  "max_repair_attempts": 1,
+  "policy_version": "radar_mxc_minimal_v1",
+  "note": "Ativado após autorização explícita. Somente bundles públicos via assinatura ChatGPT; até 10 chamadas/dia incluindo reparações, modelo único e worker serial com MXC."
+}

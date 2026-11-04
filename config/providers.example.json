@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-10-26",
+  "providers": [
+    {
+      "id": "brapi",
+      "purpose": [
+        "b3_catalog",
+        "quotes",
+        "price_history"
+      ],
+      "enabled": true,
+      "docs_url": "https://brapi.dev/docs",
+      "base_url": "https://brapi.dev",
+      "catalog_route_documented": "/api/v2/tickers",
+      "quote_route": "resolve_from_current_docs_and_probe",
+      "auth_env": "BRAPI_TOKEN",
+      "documented_free_limits": {
+        "monthly_requests": 15000,
+        "tickers_per_request": 1,
+        "history_months": 3,
+        "approximate_delay_minutes": 30,
+        "dividends_included": false
+      },
+      "operational_status": "not_tested_in_target",
+      "automatic_paid_upgrade": false
+    },
+    {
+      "id": "gdelt_doc2",
+      "purpose": [
+        "news_discovery"
+      ],
+      "enabled": true,
+      "docs_url": "https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/",
+      "base_url": "https://api.gdeltproject.org/api/v2/doc/doc",
+      "auth_env": null,
+      "documented_articlelist_max_records": 250,
+      "official_universal_request_quota": null,
+      "local_min_interval_seconds": 6,
+      "returns_full_article_text": false,
+      "operational_status": "not_tested_in_target"
+    },
+    {
+      "id": "cvm",
+      "purpose": [
+        "financial_statements",
+        "company_filings"
+      ],
+      "enabled": true,
+      "docs_url": "https://dados.cvm.gov.br/",
+      "auth_env": null,
+      "dataset_pages": [
+        "https://dados.cvm.gov.br/dataset/cia_aberta-doc-dfp",
+        "https://dados.cvm.gov.br/dataset/cia_aberta-doc-itr",
+        "https://dados.cvm.gov.br/dataset/cia_aberta-doc-ipe"
+      ],
+      "operational_status": "not_tested_in_target"
+    },
+    {
+      "id": "bcb_sgs",
+      "purpose": [
+        "macro_series"
+      ],
+      "enabled": true,
+      "docs_url": "https://dadosabertos.bcb.gov.br/",
+      "auth_env": null,
+      "series_candidates": [
+        {
+          "code": 1178,
+          "meaning": "Selic efetiva anualizada base 252",
+          "unit": "percent_per_year"
+        },
+        {
+          "code": 432,
+          "meaning": "Selic meta",
+          "unit": "percent_per_year"
+        }
+      ],
+      "operational_status": "not_tested_in_target"
+    },
+    {
+      "id": "yfinance_optional",
+      "purpose": [
+        "optional_quotes_fallback"
+      ],
+      "enabled": false,
+      "docs_url": "https://github.com/ranaroussi/yfinance",
+      "unofficial": true,
+      "operational_status": "terms_and_data_probe_required",
+      "mix_series_silently": false
+    },
+    {
+      "id": "codex_cli",
+      "purpose": [
+        "single_model_analysis"
+      ],
+      "enabled": true,
+      "docs_url": "https://developers.openai.com/codex/noninteractive/",
+      "executable_env": "CODEX_BIN",
+      "authentication": "existing_subscription_login",
+      "model_env": "CODEX_MODEL",
+      "credentials_files_must_not_be_read": true,
+      "api_billing_fallback": false,
+      "operational_status": "verify_cli_help_login_sandbox_and_schema"
+    }
+  ]
+}

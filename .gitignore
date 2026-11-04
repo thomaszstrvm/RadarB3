@@ -1,0 +1,47 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+build/
+data/
+runtime/
+logs/
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+.pytest_cache/
+.ruff_cache/
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+
+# Local operational data, credentials and generated evidence
+backups/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.log
+*.tsbuildinfo
+*.pem
+*.key
+*.p12
+*.pfx
+*.exe
+# Reviewed test helpers/fixtures can be tracked explicitly inside these archives.
+/docs/qa*/
+/docs/cli-probes/
+/docs/install-manifest.json
+/docs/live-validation.json
+/docs/python-dependencies.json
+/docs/test-results.txt
+# Independent audiovisual projects and local tool state are outside this baseline.
+/presentation-*/
+/.impeccable/
