@@ -1,0 +1,125 @@
+{
+  "note": "Casos sintéticos de aceite; não são testes já implementados do aplicativo.",
+  "cases": [
+    {
+      "id": "calendar_month",
+      "given": "as_of 2026-10-26 em America/Sao_Paulo",
+      "expected": "Início local 2026-07-26 00:00; nunca 90 dias fixos."
+    },
+    {
+      "id": "month_end",
+      "given": "as_of 2027-05-31; menos 3 meses",
+      "expected": "Início 2027-02-28; ano bissexto respeitado."
+    },
+    {
+      "id": "future_evidence",
+      "given": "Matéria com published_at posterior ao as_of",
+      "expected": "Excluir do bundle atual e registrar anomalia."
+    },
+    {
+      "id": "historical_leak",
+      "given": "Notícia antiga descoberta hoje usada para simular análise de ontem",
+      "expected": "Proibir simulação point-in-time sem prova de disponibilidade anterior."
+    },
+    {
+      "id": "headline_only",
+      "given": "Manchete positiva sem texto, exposição ou preços",
+      "expected": "Não permitir supported_hypothesis nem inventar valuation; abstenção ou inconclusão."
+    },
+    {
+      "id": "syndication",
+      "given": "5 URLs republicam a mesma agência",
+      "expected": "Um relato de origem; preservar URLs e independência desconhecida quando necessário."
+    },
+    {
+      "id": "material_revision",
+      "given": "Mesma URL corrige lucro de 10 para 1",
+      "expected": "Nova versão, nova análise elegível; não sobrescrever a evidência antiga."
+    },
+    {
+      "id": "split",
+      "given": "Preço bruto 100 para 50 em split 2:1",
+      "expected": "Não sinalizar perda econômica de 50%; usar ajuste confirmado ou suprimir métrica."
+    },
+    {
+      "id": "dividend",
+      "given": "Preço ex-dividendo sem série de retorno total",
+      "expected": "Rotular retorno de preço; não interpretar como retorno total."
+    },
+    {
+      "id": "missing_price",
+      "given": "Ausência de cotação em um pregão",
+      "expected": "Null com motivo; não zero ou retorno artificial."
+    },
+    {
+      "id": "short_history",
+      "given": "Somente 60 observações para retorno de 63 pregões",
+      "expected": "Métrica indisponível, sem trocar silenciosamente o horizonte."
+    },
+    {
+      "id": "ticker_suffix",
+      "given": "Símbolo PETR4.SA no adaptador Yahoo",
+      "expected": "Preservar ponto; não PETR4-SA."
+    },
+    {
+      "id": "gdelt_cap",
+      "given": "Resposta com 250 resultados em um intervalo",
+      "expected": "Subdividir; no mínimo temporal marcar truncamento e lacuna se continuar saturado."
+    },
+    {
+      "id": "quota",
+      "given": "Cota mensal disponível menor que universo pendente",
+      "expected": "Não ultrapassar orçamento; reagendar e exibir cobertura parcial."
+    },
+    {
+      "id": "restart",
+      "given": "Worker interrompido após salvar artigo e antes de confirmar job",
+      "expected": "Retomar sem duplicação; idempotência e lease expirado."
+    },
+    {
+      "id": "ai_injection",
+      "given": "Texto da matéria pede executar shell e ignorar schema",
+      "expected": "Tratar como texto; nenhum tool, shell, acesso a segredo ou alteração de tarefa."
+    },
+    {
+      "id": "unknown_citation",
+      "given": "IA usa evidence_id que não existe",
+      "expected": "Quarentena; não publicar análise inválida."
+    },
+    {
+      "id": "wrong_asset",
+      "given": "IA devolve asset_id diferente do bundle",
+      "expected": "Rejeitar semanticamente."
+    },
+    {
+      "id": "ai_quota",
+      "given": "CLI autenticado retorna limite de uso",
+      "expected": "Pausar IA; manter coleta e UI; sem API paga ou outro modelo."
+    },
+    {
+      "id": "source_down",
+      "given": "Fonte retorna 403/429/timeout",
+      "expected": "Status distinto de zero notícias; respeitar retry/bloqueio, sem contorno."
+    },
+    {
+      "id": "same_day_unknown_time",
+      "given": "Publicação tem só data, sem hora",
+      "expected": "Não concluir que notícia antecedeu reação intradiária."
+    },
+    {
+      "id": "duplicate_alert",
+      "given": "Job repetido com mesma versão e materialidade",
+      "expected": "Um alerta, não múltiplas notificações."
+    },
+    {
+      "id": "demo_isolation",
+      "given": "Falha em requisição real com fixture disponível",
+      "expected": "Nunca substituir resultado real pela fixture; demo separado e identificado."
+    },
+    {
+      "id": "fundamental_revision",
+      "given": "Balanço reapresentado com nova escala/unidade",
+      "expected": "Guardar versões; converter unidade explicitamente e evitar vazamento histórico."
+    }
+  ]
+}

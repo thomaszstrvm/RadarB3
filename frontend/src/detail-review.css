@@ -1,0 +1,59 @@
+.asset-brief {
+  margin: 12px 0 18px;
+  padding: 3px 0 4px 14px;
+  border-inline-start: 2px solid var(--color-action);
+  max-width: 72ch;
+  overflow-wrap: anywhere;
+}
+.asset-brief > div + div { margin-top: 14px; }
+.asset-brief h3, .brief-facts dt, .asset-brief .brief-caption, .asset-brief .brief-source {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.asset-brief h3, .brief-facts dt { margin: 0 0 3px; font-weight: 600; }
+.asset-brief p, .brief-facts, .brief-facts dd { margin: 0; }
+.brief-event-title, .brief-conclusion { font-size: 15px; font-weight: 650; line-height: 1.4; }
+.asset-brief .brief-source { margin-top: 3px; }
+.asset-brief .brief-interpretation { margin-top: 6px; font-size: 13px; }
+.brief-facts dt { margin-top: 9px; }
+.brief-facts dd { font-size: 13px; line-height: 1.5; }
+.snapshot-citation { display: inline-block; overflow-wrap: anywhere; }
+.snapshot-citation small, .evidence-disclosure summary small {
+  display: block;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+.citation-list { margin: 0 0 8px; padding-inline-start: 0; list-style: none; }
+.citation-list .snapshot-citation { font-size: 13px; }
+.citation-list li { margin: 5px 0; }
+.more-citations { margin-bottom: 12px; }
+.citation-inline { min-width: 0; font-size: .9375rem; line-height: 1.6; color: var(--color-text); }
+.citation-inline > summary {
+  min-height: 44px;
+  padding-block: 3px;
+  color: var(--color-action);
+  font-weight: 600;
+  font-size: .875rem;
+  cursor: pointer;
+}
+.citation-inline > summary small {
+  display: block;
+  padding-inline-start: 1.15em;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+.citation-preview {
+  padding: 6px 12px 12px;
+  border-inline-start: 2px solid var(--color-border-strong);
+  overflow-wrap: anywhere;
+}
+.citation-preview pre { max-height: 15rem; overflow: auto; white-space: pre-wrap; }
+.citation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.citation-actions a, .citation-provenance summary { display: inline-block; padding-block: 9px; }
+.citation-actions a { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; }
+.citation-provenance summary { display: list-item; cursor: pointer; }
+.citation-text { white-space: pre-wrap; }
+.evidence-list li[id], .notice[id^="evidence-"] { scroll-margin-top: 12px; }

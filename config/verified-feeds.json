@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "checked_at": "2026-10-29",
+  "note": "Only published official links. Discovery is separate from successful probe. Feed host permissions do not expand article hostname allowlists.",
+  "sources": [
+    {
+      "id": "br_g1",
+      "rss_urls": [
+        "https://g1.globo.com/rss/g1/economia/"
+      ],
+      "status": "rss_metadata_verified",
+      "discovery_url": "https://g1.globo.com/economia/",
+      "rss_sections": {
+        "https://g1.globo.com/rss/g1/economia/": "Economia"
+      },
+      "last_operational_probe_at": "2026-10-29",
+      "note": "Official RSS; bounded decoding and strict timestamp parsing. Feed window only; no complete historical coverage."
+    },
+    {
+      "id": "br_uol",
+      "rss_urls": [
+        "https://rss.uol.com.br/feed/economia.xml"
+      ],
+      "status": "rss_metadata_verified",
+      "discovery_url": "https://rss.uol.com.br/",
+      "note": "Official RSS; bounded decoding and strict timestamp parsing. Feed window only; no complete historical coverage.",
+      "rss_sections": {
+        "https://rss.uol.com.br/feed/economia.xml": "Economia"
+      },
+      "last_operational_probe_at": "2026-10-29"
+    },
+    {
+      "id": "br_cnnbr",
+      "rss_urls": [],
+      "status": "rss_reuse_terms_review_required",
+      "discovery_url": "https://www.cnnbrasil.com.br/",
+      "technical_feed_url": "https://admin.cnnbrasil.com.br/feed/",
+      "terms_url": "https://conteudos.cnnbrasil.com.br/termos-de-uso-da-cnn-brasil/",
+      "note": "Technical RSS probe succeeded. No explicit RSS reuse license established; not enabled in collector."
+    },
+    {
+      "id": "us_yahoo",
+      "rss_urls": [],
+      "status": "discovery_http_429",
+      "discovery_url": "https://news.yahoo.com/",
+      "note": "Discovery returned 429; no alternate route or repeated probe.",
+      "last_operational_probe_at": "2026-10-29"
+    },
+    {
+      "id": "us_nyt",
+      "rss_urls": [
+        "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"
+      ],
+      "status": "rss_metadata_verified",
+      "discovery_url": "https://www.nytimes.com/rss"
+    },
+    {
+      "id": "us_fox",
+      "rss_urls": [
+        "https://moxie.foxnews.com/google-publisher/world.xml"
+      ],
+      "status": "rss_metadata_verified",
+      "discovery_url": "https://www.foxnews.com/story/foxnews-com-rss-feeds",
+      "note": "Official documentation links verified through web tool. Personal noncommercial headline use; link directly to publisher."
+    },
+    {
+      "id": "fin_infomoney",
+      "rss_urls": [
+        "https://www.infomoney.com.br/feed/"
+      ],
+      "status": "rss_metadata_verified",
+      "discovery_url": "https://www.infomoney.com.br/",
+      "note": "General feed requires section filtering; only metadata assessed."
+    },
+    {
+      "id": "fin_yahoo",
+      "rss_urls": [],
+      "status": "discovery_http_429",
+      "discovery_url": "https://finance.yahoo.com/",
+      "last_operational_probe_at": "2026-10-29",
+      "note": "Discovery returned 429; no alternate route or repeated probe."
+    }
+  ]
+}

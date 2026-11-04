@@ -1,0 +1,13 @@
+Implemente o Radar B3 descrito nesta pasta, até entregar um aplicativo local funcional, testado e com instruções de execução.
+
+Comece lendo AGENTS.md, os documentos docs/01 a docs/09, config/, schemas/, prompts/ e workflows/. Preserve esses materiais como especificação. Inspecione o ambiente e o repositório antes de alterar arquivos. Se já houver código, evolua-o sem apagar trabalho existente.
+
+O objetivo é identificar automaticamente mudanças relevantes nas notícias brasileiras e mundiais dos últimos três meses de calendário, relacioná-las a ações e units da B3 e apresentar hipóteses de impacto e oportunidades para investigação, com fontes, riscos, cenários contrários e cobertura explícita. Faça uma varredura do universo disponível, não apenas dos favoritos.
+
+Use Python/FastAPI, SQLite, worker com fila durável e React/TypeScript. Tudo deve funcionar localmente e sem novos serviços pagos. Use um único modelo de IA por meio do Codex CLI autenticado pela assinatura já existente, após verificar a compatibilidade no ambiente. Não use API faturada, compra automática de créditos ou modelos adicionais como fallback. Se a franquia ou o login impedir a análise, mantenha coleta e painel funcionando e mostre a fila pendente.
+
+Implemente primeiro os contratos, os probes de dados gratuitos e uma fatia vertical real; depois complete coleta incremental, análise, painel e testes. RSS, GDELT e provedores de preços precisam de validação real. Não finja histórico completo, cotações ao vivo ou integração pronta. Dados fictícios só no modo demonstração identificado.
+
+Siga a direção visual e os workflows do pacote: tabela central, gráfico com eventos, evidências navegáveis, estados completos e boa legibilidade. Aplique as capacidades selecionadas das skills; audite licença, código e versão antes de reutilizar originais. Não instale pacotes de skills inteiros nem dependa do Figma para o aplicativo funcionar.
+
+Continue autonomamente nas decisões reversíveis dentro desse escopo. Registre suposições e impedimentos concretos. Ao finalizar, execute os testes pertinentes, demonstre o fluxo com dados reais quando disponíveis e entregue README, comandos de inicialização, .env.example, lockfiles, diagnóstico de cobertura e limitações restantes. Não encerre apenas com um plano, protótipo visual ou lista de tarefas.

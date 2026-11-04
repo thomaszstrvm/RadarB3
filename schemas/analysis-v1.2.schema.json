@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Radar B3 experimental technical hypothesis v1.2",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.2"
+    },
+    "analysis_id": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string"
+    },
+    "asset_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "supported_hypothesis",
+        "inconclusive",
+        "insufficient_data"
+      ]
+    },
+    "synthesis": {
+      "type": "string"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "inference"
+            ]
+          },
+          "statement": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "statement",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case": {
+            "type": "string",
+            "enum": [
+              "conditional_case",
+              "upside_case",
+              "downside_case"
+            ]
+          },
+          "horizon_days": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidation_conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "case",
+          "horizon_days",
+          "description",
+          "conditions",
+          "invalidation_conditions",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "opportunity": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": [
+            "investigate",
+            "watch",
+            "avoid_for_now",
+            "insufficient_data"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "classification",
+        "rationale",
+        "evidence_ids"
+      ],
+      "additionalProperties": false
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_quality_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "buy",
+            "sell",
+            "wait",
+            "insufficient_data"
+          ]
+        },
+        "horizon_days": {
+          "type": "integer"
+        },
+        "as_of": {
+          "type": "string"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "counterpoints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "invalidation_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "method": {
+          "type": "object",
+          "properties": {
+            "policy_id": {
+              "type": "string",
+              "const": "technical_alignment_v1"
+            },
+            "policy_sha256": {
+              "type": "string",
+              "const": "36bf67c01382974dc3da347423692db059632b5efa0175e62dee4516b35dba6a"
+            },
+            "experimental": {
+              "type": "boolean",
+              "const": true
+            },
+            "horizon_semantics": {
+              "type": "string",
+              "const": "conditional_hypothesis_reassessment"
+            },
+            "eligible_action": {
+              "type": "string",
+              "enum": [
+                "buy",
+                "sell",
+                "wait",
+                "insufficient_data"
+              ]
+            }
+          },
+          "required": [
+            "policy_id",
+            "policy_sha256",
+            "experimental",
+            "horizon_semantics",
+            "eligible_action"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "action",
+        "horizon_days",
+        "as_of",
+        "rationale",
+        "evidence_ids",
+        "risks",
+        "counterpoints",
+        "invalidation_conditions",
+        "method"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "as_of",
+    "asset_id",
+    "status",
+    "synthesis",
+    "claims",
+    "scenarios",
+    "opportunity",
+    "risks",
+    "missing_evidence",
+    "data_quality_flags",
+    "evidence_ids",
+    "signal"
+  ],
+  "additionalProperties": false
+}

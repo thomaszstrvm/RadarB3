@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc"><title id="title">Radar B3 — esquema visual original</title><desc id="desc">Exemplo sintético de tabela de mercado, gráfico histórico e evidências. Nenhum dado real ou aplicativo funcional.</desc>
+<rect x="0" y="0" width="1600" height="1040" rx="0" fill="#f6f7f9"/>
+<rect x="0" y="0" width="214" height="1040" rx="0" fill="#ffffff"/>
+<polyline points="214,0 214,1040" fill="none" stroke="#cad2dc" stroke-width="1"/>
+<rect x="24" y="30" width="34" height="34" rx="8" fill="#006b75"/>
+<text x="32" y="56" font-family="DejaVu Sans, sans-serif" font-size="21" fill="#ffffff" font-weight="700">R</text>
+<text x="70" y="55" font-family="DejaVu Sans, sans-serif" font-size="18" fill="#152332" font-weight="700">RADAR B3</text>
+<text x="24" y="116" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">INVESTIGAÇÃO</text>
+<text x="26" y="164" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Visão geral</text>
+<rect x="12" y="195" width="190" height="44" rx="6" fill="#e0f2f3"/>
+<text x="26" y="220" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#006b75" font-weight="700">Mercado</text>
+<text x="26" y="276" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Eventos</text>
+<text x="26" y="332" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Favoritos</text>
+<text x="26" y="388" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Fontes e cobertura</text>
+<text x="26" y="444" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Configurações</text>
+<rect x="18" y="899" width="178" height="106" rx="8" fill="#eff2f6"/>
+<circle cx="34" cy="922" r="4" fill="#006b75"/>
+<text x="46" y="923" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#152332" font-weight="700">Execução local</text>
+<text x="30" y="956" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">1 modelo de análise</text>
+<text x="30" y="979" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#4f6073" font-weight="400">Cobertura sempre visível</text>
+<text x="246" y="60" font-family="DejaVu Sans, sans-serif" font-size="30" fill="#152332" font-weight="700">Mercado</text>
+<text x="246" y="90" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#4f6073" font-weight="400">Acompanhe mudanças. Abra as evidências.</text>
+<rect x="1047" y="29" width="276" height="42" rx="6" fill="#ffffff" stroke="#cad2dc"/>
+<text x="1064" y="56" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#152332" font-weight="400">26 jul — 26 out 2026</text>
+<rect x="1341" y="29" width="226" height="42" rx="6" fill="#006b75"/>
+<text x="1370" y="56" font-family="DejaVu Sans, sans-serif" font-size="15" fill="#ffffff" font-weight="700">Atualizar dados</text>
+<rect x="246" y="112" width="1322" height="42" rx="6" fill="#fff3d6"/>
+<text x="264" y="137" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#875500" font-weight="700">EXEMPLO VISUAL · DADOS FICTÍCIOS · Este desenho é uma referência de layout, não o aplicativo.</text>
+<text x="246" y="192" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Ativos com preço</text>
+<text x="246" y="234" font-family="DejaVu Sans, sans-serif" font-size="29" fill="#152332" font-weight="700">420 / 460</text>
+<text x="246" y="259" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">Universo sintético cadastrado</text>
+<text x="584" y="192" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Mudanças identificadas</text>
+<text x="584" y="234" font-family="DejaVu Sans, sans-serif" font-size="29" fill="#152332" font-weight="700">18</text>
+<text x="584" y="259" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">Desde a varredura anterior</text>
+<text x="922" y="192" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Análises pendentes</text>
+<text x="922" y="234" font-family="DejaVu Sans, sans-serif" font-size="29" fill="#152332" font-weight="700">7</text>
+<text x="922" y="259" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">Fila limitada à franquia</text>
+<text x="1260" y="192" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Fontes alcançadas</text>
+<text x="1260" y="234" font-family="DejaVu Sans, sans-serif" font-size="29" fill="#152332" font-weight="700">6 / 8</text>
+<text x="1260" y="259" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">2 fontes com acesso parcial</text>
+<polyline points="246,281 1568,281" fill="none" stroke="#cad2dc" stroke-width="1"/>
+<rect x="246" y="303" width="806" height="47" rx="6" fill="#ffffff" stroke="#cad2dc"/>
+<text x="264" y="331" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#52647b" font-weight="400">Buscar ativo, empresa ou evento…</text>
+<rect x="1068" y="303" width="150" height="47" rx="6" fill="#ffffff" stroke="#cad2dc"/>
+<text x="1084" y="329" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#152332" font-weight="400">Todos os setores</text>
+<rect x="1234" y="303" width="174" height="47" rx="6" fill="#ffffff" stroke="#cad2dc"/>
+<text x="1251" y="329" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#152332" font-weight="400">Qualidade: todas</text>
+<rect x="1424" y="303" width="144" height="47" rx="6" fill="#ffffff" stroke="#cad2dc"/>
+<text x="1444" y="330" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#152332" font-weight="400">Mais filtros</text>
+<text x="246" y="388" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#4f6073" font-weight="400">460 ativos · ordenados por prioridade de investigação</text>
+<rect x="246" y="408" width="796" height="492" rx="8" fill="#ffffff" stroke="#cad2dc"/>
+<rect x="247" y="409" width="794" height="46" rx="7" fill="#eff2f6"/>
+<text x="262" y="435" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">ATIVO / EVENTO</text>
+<text x="584" y="435" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">21 PREGÕES</text>
+<text x="711" y="435" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">PRIORIDADE</text>
+<text x="870" y="435" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">EVIDÊNCIA</text>
+<rect x="247" y="457" width="794" height="84" rx="0" fill="#e0f2f3"/>
+<rect x="247" y="457" width="4" height="84" rx="0" fill="#006b75"/>
+<text x="264" y="485" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">DEMO3</text>
+<text x="353" y="483" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Companhia Exemplo</text>
+<text x="264" y="512" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Mudança regulatória</text>
+<text x="583" y="494" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#17623a" font-weight="700">+2,4%</text>
+<text x="728" y="495" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6545a4" font-weight="700">Alta</text>
+<text x="885" y="494" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#1c5caa" font-weight="400">Parcial</text>
+<polyline points="262,542 1026,542" fill="none" stroke="#e1e7ee" stroke-width="1"/>
+<text x="264" y="571" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">FICT4</text>
+<text x="353" y="569" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Indústria Fictícia</text>
+<text x="264" y="598" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Revisão de resultados</text>
+<text x="583" y="580" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#b42335" font-weight="700">−1,1%</text>
+<text x="728" y="581" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6545a4" font-weight="700">Média</text>
+<text x="885" y="580" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#1c5caa" font-weight="400">Média</text>
+<polyline points="262,628 1026,628" fill="none" stroke="#e1e7ee" stroke-width="1"/>
+<text x="264" y="657" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">SIMU11</text>
+<text x="353" y="655" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Grupo Simulado</text>
+<text x="264" y="684" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Novo projeto anunciado</text>
+<text x="583" y="666" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#17623a" font-weight="700">+0,8%</text>
+<text x="728" y="667" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6545a4" font-weight="700">Média</text>
+<text x="885" y="666" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#1c5caa" font-weight="400">Baixa</text>
+<polyline points="262,714 1026,714" fill="none" stroke="#e1e7ee" stroke-width="1"/>
+<text x="264" y="743" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">TEST3</text>
+<text x="353" y="741" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Empresa Ilustrativa</text>
+<text x="264" y="770" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Sem evento novo</text>
+<text x="583" y="752" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#52647b" font-weight="700">Indisponível</text>
+<text x="728" y="753" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6545a4" font-weight="700">Baixa</text>
+<text x="885" y="752" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#1c5caa" font-weight="400">Parcial</text>
+<polyline points="262,800 1026,800" fill="none" stroke="#e1e7ee" stroke-width="1"/>
+<text x="264" y="829" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">RASC4</text>
+<text x="353" y="827" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Organização de Exemplo</text>
+<text x="264" y="856" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#4f6073" font-weight="400">Alteração de custos</text>
+<text x="583" y="838" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#b42335" font-weight="700">−0,5%</text>
+<text x="728" y="839" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6545a4" font-weight="700">Média</text>
+<text x="885" y="838" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#1c5caa" font-weight="400">Média</text>
+<text x="262" y="934" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">Mostrando 1–5 de 460 · números ilustrativos</text>
+<text x="865" y="934" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#006b75" font-weight="400">Anterior   Próxima</text>
+<rect x="1060" y="376" width="508" height="597" rx="8" fill="#ffffff" stroke="#cad2dc"/>
+<text x="1084" y="421" font-family="DejaVu Sans, sans-serif" font-size="24" fill="#152332" font-weight="700">DEMO3</text>
+<text x="1200" y="419" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#4f6073" font-weight="400">Companhia Exemplo</text>
+<text x="1084" y="454" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#1c5caa" font-weight="700">Acompanhar · evidência parcial</text>
+<text x="1084" y="487" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="700">HISTÓRICO ILUSTRATIVO · BASE 100</text>
+<polyline points="1117,515 1539,515" fill="none" stroke="#dbe2e9" stroke-width="1"/>
+<text x="1082" y="518" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#52647b" font-weight="400">104</text>
+<polyline points="1117,557 1539,557" fill="none" stroke="#dbe2e9" stroke-width="1"/>
+<text x="1082" y="560" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#52647b" font-weight="400">102</text>
+<polyline points="1117,599 1539,599" fill="none" stroke="#dbe2e9" stroke-width="1"/>
+<text x="1082" y="602" font-family="DejaVu Sans, sans-serif" font-size="10" fill="#52647b" font-weight="400">100</text>
+<polyline points="1120,595 1145,580 1170,584 1195,562 1220,572 1245,555 1270,563 1295,544 1320,548 1345,532 1370,542 1395,525 1420,530 1445,517 1470,521 1500,510 1535,520" fill="none" stroke="#006b75" stroke-width="3"/>
+<polyline points="1395,505 1395,608" fill="none" stroke="#a4560a" stroke-width="1"/>
+<circle cx="1395" cy="525" r="5" fill="#a4560a"/>
+<text x="1117" y="630" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="400">Jul</text>
+<text x="1251" y="630" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="400">Ago</text>
+<text x="1384" y="630" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="400">Set</text>
+<text x="1512" y="630" font-family="DejaVu Sans, sans-serif" font-size="11" fill="#52647b" font-weight="400">Out</text>
+<polyline points="1084,654 1544,654" fill="none" stroke="#cad2dc" stroke-width="1"/>
+<text x="1084" y="687" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">O que mudou</text>
+<text x="1084" y="714" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Uma manchete menciona uma nova tarifa.</text>
+<text x="1084" y="737" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">A exposição desta empresa ainda é desconhecida.</text>
+<text x="1084" y="777" font-family="DejaVu Sans, sans-serif" font-size="16" fill="#152332" font-weight="700">Hipótese e contraponto</text>
+<text x="1084" y="806" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">O efeito depende dos insumos, custos e repasses.</text>
+<text x="1084" y="829" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#4f6073" font-weight="400">Sem esses dados, não há conclusão sobre o preço.</text>
+<rect x="1084" y="856" width="460" height="88" rx="6" fill="#fff3d6"/>
+<text x="1100" y="885" font-family="DejaVu Sans, sans-serif" font-size="13" fill="#875500" font-weight="700">Evidências necessárias</text>
+<text x="1100" y="910" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#875500" font-weight="400">Texto da medida · exposição · preços comparáveis</text>
+<text x="246" y="1003" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#52647b" font-weight="400">REFERÊNCIA ORIGINAL · Todas as empresas, quantidades e séries deste desenho são sintéticas.</text>
+</svg>

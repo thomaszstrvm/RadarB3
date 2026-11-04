@@ -1,0 +1,248 @@
+{
+  "schema_version": "1.0",
+  "selection_reference_month": "2026-09",
+  "selection_checked_at": "2026-10-26",
+  "ranking_metric": "Similarweb local country traffic, News & Media Publishers",
+  "sources": [
+    {
+      "id": "br_g1",
+      "name": "G1 / Globo",
+      "country": "BR",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "g1.globo.com"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "Economia",
+        "Mundo",
+        "Política"
+      ],
+      "publisher_group": "globo",
+      "ranking_domain": "globo.com",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "br_uol",
+      "name": "UOL",
+      "country": "BR",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "economia.uol.com.br",
+        "noticias.uol.com.br"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "Economia",
+        "Internacional",
+        "Política"
+      ],
+      "publisher_group": "uol",
+      "ranking_domain": "uol.com.br",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "br_cnnbr",
+      "name": "CNN Brasil",
+      "country": "BR",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "cnnbrasil.com.br"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "Economia",
+        "Money",
+        "Internacional",
+        "Política"
+      ],
+      "publisher_group": "cnn_brasil",
+      "ranking_domain": "cnnbrasil.com.br",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "us_yahoo",
+      "name": "Yahoo News",
+      "country": "US",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "news.yahoo.com"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "World",
+        "Business",
+        "Economic policy"
+      ],
+      "publisher_group": "yahoo",
+      "ranking_domain": "yahoo.com",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "us_nyt",
+      "name": "The New York Times",
+      "country": "US",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "nytimes.com"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "World",
+        "Business",
+        "Economy"
+      ],
+      "publisher_group": "nyt",
+      "ranking_domain": "nytimes.com",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "us_fox",
+      "name": "Fox News",
+      "country": "US",
+      "category": "general",
+      "enabled": true,
+      "allowed_hostnames": [
+        "foxnews.com"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "World",
+        "Business",
+        "Politics"
+      ],
+      "publisher_group": "fox",
+      "ranking_domain": "foxnews.com",
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "fin_infomoney",
+      "name": "InfoMoney",
+      "country": "BR",
+      "category": "finance",
+      "enabled": true,
+      "allowed_hostnames": [
+        "infomoney.com.br"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "Mercados",
+        "Empresas",
+        "Economia"
+      ],
+      "publisher_group": "xp_infomoney",
+      "ranking_domain": null,
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    },
+    {
+      "id": "fin_yahoo",
+      "name": "Yahoo Finance",
+      "country": "US",
+      "category": "finance",
+      "enabled": true,
+      "allowed_hostnames": [
+        "finance.yahoo.com"
+      ],
+      "www_alias_allowed": true,
+      "allow_arbitrary_subdomains": false,
+      "section_allowlist": [
+        "Markets",
+        "Economy",
+        "Companies"
+      ],
+      "publisher_group": "yahoo",
+      "ranking_domain": null,
+      "discovery_methods": [
+        "official_rss_if_available",
+        "gdelt_doc_2",
+        "permitted_public_sitemap"
+      ],
+      "rss_urls": [],
+      "feed_status": "discovery_and_probe_required",
+      "article_access": "record_per_article",
+      "syndication": "preserve_original_publisher_when_known",
+      "last_operational_probe_at": null
+    }
+  ],
+  "primary_complements": [
+    "CVM",
+    "BCB",
+    "verified_company_investor_relations"
+  ],
+  "note": "Exact hostname checks after redirects. Subdomains/alternate Yahoo routes require explicit adapter configuration after probe; these entries do not claim working RSS endpoints."
+}

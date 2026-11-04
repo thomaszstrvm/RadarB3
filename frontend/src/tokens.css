@@ -1,0 +1,198 @@
+/* Radar B3 — tokens originais. Sem fontes ou recursos externos.
+   Tema escuro fixo por preferência explícita do usuário.
+   Cores não substituem rótulos, sinais, ícones ou explicações de métricas. */
+:root {
+  color-scheme: light;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --line-height-tight: 1.25;
+  --line-height-ui: 1.45;
+  --line-height-reading: 1.65;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-muted: #eff2f6;
+  --color-surface-hover: #e7edf3;
+  --color-text: #152332;
+  --color-text-muted: #4f6073;
+  --color-text-subtle: #52647b;
+  --color-border: #cad2dc;
+  --color-border-strong: #708195;
+
+  --color-action: #006b75;
+  --color-action-hover: #00535c;
+  --color-on-action: #ffffff;
+  --color-action-soft: #e0f2f3;
+  --color-focus: #006b75;
+
+  /* Semântica financeira: sinal/variação histórica, jamais ordem de compra. */
+  --color-positive: #17623a;
+  --color-positive-bg: #e5f4ec;
+  --color-negative: #b42335;
+  --color-negative-bg: #ffedf0;
+  --color-warning: #875500;
+  --color-warning-bg: #fff3d6;
+  --color-info: #1c5caa;
+  --color-info-bg: #eaf2ff;
+  --color-priority: #6545a4;
+  --color-priority-bg: #f0eaff;
+  --color-neutral: #4f6073;
+  --color-neutral-bg: #eff2f6;
+
+  /* Qualidade da evidência usa informação/neutro. O nome confidence é um alias visual, não probabilidade da IA. */
+  --color-confidence: var(--color-info);
+  --color-confidence-bg: var(--color-info-bg);
+  --color-selected-bg: var(--color-action-soft);
+  --color-selected-border: var(--color-action);
+
+  /* Séries quantitativas: combinar com traços, marcadores e legendas. */
+  --chart-series-1: #006b75;
+  --chart-series-2: #6545a4;
+  --chart-series-3: #a4560a;
+  --chart-series-4: #1c5caa;
+  --chart-price: var(--chart-series-1);
+  --chart-benchmark: var(--chart-series-2);
+  --chart-event: var(--chart-series-3);
+  --chart-grid: #dbe2e9;
+  --chart-axis: #52647b;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-pill: 999px;
+  --shadow-panel: 0 4px 18px rgb(21 35 50 / 8%);
+  --shadow-overlay: 0 12px 40px rgb(21 35 50 / 18%);
+  --color-overlay: rgb(16 23 31 / 42%);
+
+  --sidebar-width: 13.5rem;
+  --sidebar-width-compact: 4.5rem;
+  --topbar-min-height: 4rem;
+  --detail-width: 32rem;
+  --reading-width: 72ch;
+  --control-min-height: 2.75rem;
+  --table-row-min-height: 3rem;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 3px;
+
+  --duration-fast: 120ms;
+  --duration-normal: 180ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --z-sticky: 10;
+  --z-navigation: 20;
+  --z-overlay: 40;
+  --z-dialog: 50;
+  --z-toast: 60;
+}
+
+:root { /* Dark palette applies even before React and regardless of legacy preferences. */
+  color-scheme: dark;
+  --color-bg: #10171f;
+  --color-surface: #18222d;
+  --color-surface-raised: #202d39;
+  --color-surface-muted: #202d39;
+  --color-surface-hover: #2a3948;
+  --color-text: #edf2f7;
+  --color-text-muted: #a9b8c9;
+  --color-text-subtle: #a2b2c5;
+  --color-border: #405166;
+  --color-border-strong: #8396ad;
+  --color-action: #58cbd2;
+  --color-action-hover: #8bdde2;
+  --color-on-action: #09282d;
+  --color-action-soft: #163c43;
+  --color-focus: #8bdde2;
+  --color-positive: #76d39a;
+  --color-positive-bg: #173a2a;
+  --color-negative: #ff93a4;
+  --color-negative-bg: #48232e;
+  --color-warning: #f4c56c;
+  --color-warning-bg: #40341e;
+  --color-info: #8fbcff;
+  --color-info-bg: #1c3555;
+  --color-priority: #c6acff;
+  --color-priority-bg: #35284d;
+  --color-neutral: #b8c5d5;
+  --color-neutral-bg: #263341;
+  --chart-series-1: #58cbd2;
+  --chart-series-2: #c6acff;
+  --chart-series-3: #f4c56c;
+  --chart-series-4: #8fbcff;
+  --chart-grid: #354656;
+  --chart-axis: #a2b2c5;
+  --shadow-panel: 0 4px 18px rgb(0 0 0 / 20%);
+  --shadow-overlay: 0 12px 40px rgb(0 0 0 / 40%);
+  --color-overlay: rgb(0 0 0 / 58%);
+}
+
+/* Utilitários opcionais; não substituem a semântica dos componentes. */
+.numeric {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.text-reading {
+  max-width: var(--reading-width);
+  line-height: var(--line-height-reading);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-color: Highlight;
+  }
+}

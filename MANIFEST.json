@@ -1,0 +1,179 @@
+{
+  "package": "radar-b3-codex",
+  "version": "1.0",
+  "created_at": "2026-10-26",
+  "artifact_kind": "implementation_handoff_not_working_application",
+  "upstream_skill_files_vendored": false,
+  "files": [
+    {
+      "path": ".env.example",
+      "size_bytes": 656,
+      "sha256": "d03eb9ed77836bdfb5aac71b2133f19629c9f20db11666af9e6bafed4f5042d1"
+    },
+    {
+      "path": ".gitignore",
+      "size_bytes": 223,
+      "sha256": "6dd6422e3b022b4c746b41daeb7ec5c702a8e06a2c2d63015a006eab118a32d1"
+    },
+    {
+      "path": "AGENTS.md",
+      "size_bytes": 5225,
+      "sha256": "35f7d760401e67dd40626fc2247c19144a0e476db364ef25822c49bf8b16a0fe"
+    },
+    {
+      "path": "LEIA-ME.md",
+      "size_bytes": 3475,
+      "sha256": "08753a3ec7f0c0e2a16edba90ae85c047c6e49df1d6cb656ed45b62e00bd5701"
+    },
+    {
+      "path": "PROMPT_INICIAL_CODEX.txt",
+      "size_bytes": 2396,
+      "sha256": "0310a9800c3ff61b5979671cb1615511bf224a2e42f5a82a10676405ccab6a74"
+    },
+    {
+      "path": "VALIDACAO.md",
+      "size_bytes": 1827,
+      "sha256": "7a75d925d1915d51eb409432db4e0d051b3d405b52c7c23c1f5c01a177489515"
+    },
+    {
+      "path": "config/news-sources.json",
+      "size_bytes": 6988,
+      "sha256": "ee9b88f9464b9d61e56a084b3c1db0b24105b315ad8c09aea295fc949b5bf6ab"
+    },
+    {
+      "path": "config/project.example.json",
+      "size_bytes": 2784,
+      "sha256": "f4039153ea8fc1339a020c082b4090a0f17965161b687f16ac5fdf61ac609bb5"
+    },
+    {
+      "path": "config/providers.example.json",
+      "size_bytes": 3082,
+      "sha256": "0b1ea38be10264037e3b1990940f8c037d61af4ec22723d90336a61d707ac154"
+    },
+    {
+      "path": "design/layout-reference.png",
+      "size_bytes": 126299,
+      "sha256": "f6adf3785442dc01b186271985b4785e6da14da7152542d25c325bc677f9bb19"
+    },
+    {
+      "path": "design/layout-reference.svg",
+      "size_bytes": 15017,
+      "sha256": "b518cab9ca0db3e51489b09718d4c5ba6fe70c7f5cbe577dad81f985ccbc5a28"
+    },
+    {
+      "path": "design/tokens.css",
+      "size_bytes": 5505,
+      "sha256": "dd8dda5005347397a295428e258ab764d72fafa908b88392f37a32013271e664"
+    },
+    {
+      "path": "docs/01-produto-escopo.md",
+      "size_bytes": 4655,
+      "sha256": "2e374efcdaa1ffd3399e8c20ea319657fd9c5129ed79418728db806a625521f6"
+    },
+    {
+      "path": "docs/02-arquitetura.md",
+      "size_bytes": 30057,
+      "sha256": "67d9f68c20832446d7d01807967aa75a67b99d30b7c47d28411d496136e99063"
+    },
+    {
+      "path": "docs/03-dados-fontes.md",
+      "size_bytes": 9934,
+      "sha256": "cdb8ee2759f35232400acc278e833d70486acad2083860d159b20739cdd258f5"
+    },
+    {
+      "path": "docs/04-metodologia-analise.md",
+      "size_bytes": 8615,
+      "sha256": "0f54bd7a44cb5db700e67bd21940083f736d26c7b5ec8b923d749003ad2da961"
+    },
+    {
+      "path": "docs/05-design.md",
+      "size_bytes": 21276,
+      "sha256": "b3b633bc1e50f2bf8f1a80f1467905fb2b0f61cfb56fe55bd640e55f80deff3b"
+    },
+    {
+      "path": "docs/06-implementacao-aceite.md",
+      "size_bytes": 19700,
+      "sha256": "7a123626f78ae6427adfdd1fc3709edb2219620fe9c6cd63b9b9b9606427e608"
+    },
+    {
+      "path": "docs/07-skills-integracoes.md",
+      "size_bytes": 7609,
+      "sha256": "951d26e79ce09685fd56cf123f85e5294bf9c3d0e61619d40e6292b268f42782"
+    },
+    {
+      "path": "docs/08-referencias-inspecao.md",
+      "size_bytes": 6268,
+      "sha256": "73895706cee1b07bcc023a7baab7c062ba2a73269375910ea802b9b0539b6f3f"
+    },
+    {
+      "path": "docs/09-decisoes-limites.md",
+      "size_bytes": 3644,
+      "sha256": "526fbfa2d5134cc269d76b495fe0055de851feb5fae1af22bfb0a4b5872f66ed"
+    },
+    {
+      "path": "fixtures/analysis.example.json",
+      "size_bytes": 1183,
+      "sha256": "ba0a060a15027b736feeb13e3beea85115ee53d695bd80556a8f350bfbb2dac9"
+    },
+    {
+      "path": "fixtures/event.example.json",
+      "size_bytes": 747,
+      "sha256": "942668fd255777dc0e50da7db796e3f2a31d41eee52dddb598d840f580eb7e1a"
+    },
+    {
+      "path": "fixtures/evidence-bundle.example.json",
+      "size_bytes": 2414,
+      "sha256": "648ccf57a50e1058dedf7b429793748a362482890e54c187f49637f2fd022568"
+    },
+    {
+      "path": "fixtures/scenario_cases.json",
+      "size_bytes": 4598,
+      "sha256": "54256948510aa28255dfdeeb47d5ae43fe427014e828e94bb779140456e1519d"
+    },
+    {
+      "path": "prompts/analysis-request.txt",
+      "size_bytes": 624,
+      "sha256": "259ab002067e1fb0c6cd39d3a8cab09b248dc7f28cadbe837e462149965cf5dc"
+    },
+    {
+      "path": "prompts/analysis-system.txt",
+      "size_bytes": 3310,
+      "sha256": "732019092a0d7065c5ef023da0a88afe35901f00a4dbdbeb9c936eae9f581d5a"
+    },
+    {
+      "path": "schemas/analysis.schema.json",
+      "size_bytes": 3613,
+      "sha256": "d7af54bd52a6d72d2a32c05ca82af30621b5dbf0d56dab9d502dcff155ba22a0"
+    },
+    {
+      "path": "schemas/event.schema.json",
+      "size_bytes": 2786,
+      "sha256": "68abb61d1f1fe03abd62afdb245d79969a04b47d91085751e2bf9dd0f8ffbb89"
+    },
+    {
+      "path": "schemas/evidence-bundle.schema.json",
+      "size_bytes": 7627,
+      "sha256": "3a6e1de2cfa42e8b558eafaf21bb59ac1ef5e0b2fe3313ca5130b1a7c1b198b1"
+    },
+    {
+      "path": "scripts/verify_package.py",
+      "size_bytes": 7644,
+      "sha256": "57a57308308e6d6387b179735484ae0c6e0b1c00eabd12e716a670cb40eadd69"
+    },
+    {
+      "path": "workflows/data-review.md",
+      "size_bytes": 2084,
+      "sha256": "8d1e3bd6c1d7503292da7d43a50384a855d856d080a663a222be8ffb255bce3d"
+    },
+    {
+      "path": "workflows/design-review.md",
+      "size_bytes": 8969,
+      "sha256": "298045e99531165fb272b79e68d2fa5976319f89e9881d6d309845bc4e3689d7"
+    },
+    {
+      "path": "workflows/skill-integration.md",
+      "size_bytes": 1205,
+      "sha256": "5d6d4d68710b23697dff038422e0a32b66393187e7dc2e0b68f53ba3e7b85857"
+    }
+  ]
+}

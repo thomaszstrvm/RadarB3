@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "product": "Radar B3",
+  "locale": "pt-BR",
+  "timezone": "America/Sao_Paulo",
+  "mode": "real",
+  "bind_host": "127.0.0.1",
+  "news_lookback": {
+    "value": 3,
+    "unit": "calendar_months",
+    "include_start_date": true,
+    "end": "as_of",
+    "month_end_policy": "clamp",
+    "start_time_policy": "start_of_local_day"
+  },
+  "forecast_horizons_days": [
+    30,
+    90
+  ],
+  "universe": {
+    "market": "B3",
+    "include_types": [
+      "stock",
+      "unit"
+    ],
+    "exclude_types": [
+      "fund",
+      "etf",
+      "bdr",
+      "option",
+      "crypto"
+    ],
+    "unclassified_policy": "visible_pending",
+    "watchlist_limits_scan": false
+  },
+  "schedule": {
+    "news_interval_minutes": 60,
+    "incremental_overlap_hours": 48,
+    "prices": "daily_after_verified_market_close",
+    "catalog_interval_days": 7,
+    "catch_up_on_start": true
+  },
+  "ai": {
+    "provider": "codex_cli",
+    "authentication": "existing_chatgpt_subscription",
+    "model": null,
+    "concurrency": 1,
+    "max_new_analyses_per_day": 10,
+    "timeout_seconds": 300,
+    "max_repair_attempts": 1,
+    "max_bundle_characters": 60000,
+    "max_output_tokens_hint": 6000,
+    "paid_fallback": false,
+    "automatic_credit_purchase": false,
+    "external_tools_allowed": false
+  },
+  "quotes": {
+    "planned_monthly_budget": 12000,
+    "documented_free_monthly_cap": 15000,
+    "reserve_fraction": 0.2,
+    "history_months": 3,
+    "history_status": "probe_required"
+  },
+  "collection": {
+    "per_host_concurrency": 1,
+    "default_min_request_interval_seconds": 6,
+    "max_retries": 3,
+    "http_timeout_seconds": 30,
+    "max_response_bytes": 5000000,
+    "gdelt_articlelist_max_records": 250,
+    "gdelt_min_split_minutes": 60,
+    "initial_backfill_request_budget_per_day": 500,
+    "large_dataset_overrides": {
+      "cvm": {
+        "stream_download": true,
+        "max_compressed_bytes": 250000000,
+        "max_uncompressed_bytes": 1500000000,
+        "max_entries": 20000,
+        "reject_path_traversal": true,
+        "note": "Tetos locais iniciais configuráveis, não tamanhos garantidos de arquivos CVM. Medir no probe; falhar com diagnóstico se exceder."
+      }
+    }
+  },
+  "analysis": {
+    "score_version": "priority_v1_heuristic",
+    "priority_weights": {
+      "novelty": 30,
+      "economic_link": 30,
+      "event_relevance": 20,
+      "evidence_quality": 20
+    },
+    "probabilities_enabled": false,
+    "target_prices_enabled": false,
+    "orders_enabled": false
+  },
+  "ui": {
+    "theme": "light",
+    "optional_dark_theme": true,
+    "default_page_size": 50,
+    "poll_interval_seconds": 30
+  },
+  "free_only": true,
+  "verified_documentation_at": "2026-10-26",
+  "operational_validation": "required_in_target_environment"
+}
