@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from .timeutil import UTC, instant, iso
+from .timeutil import UTC, SAO_PAULO, instant, iso
 
 
 def dumps(value: Any) -> str:
@@ -317,8 +317,29 @@ class Store:
         with self.transaction() as con:
             con.execute("INSERT INTO provider_state VALUES(?,?,?,?,?,?,?) ON CONFLICT(provider_id) DO UPDATE SET status=excluded.status,last_attempt_at=excluded.last_attempt_at,last_success_at=COALESCE(excluded.last_success_at,provider_state.last_success_at),error_code=excluded.error_code,next_attempt_at=excluded.next_attempt_at,details_json=excluded.details_json", (provider_id, status, now, now if status in {"available", "partial"} else None, error_code, next_attempt_at, dumps(details or {})))
 
-    def list_assets(self, limit=5000):
-        return self.rows("SELECT a.*,p.close AS price,p.market_timestamp,p.fetched_at AS price_fetched_at,p.quality_flags_json AS price_quality_flags_json,b.session_date,b.adjustment,b.provider AS price_provider,EXISTS(SELECT 1 FROM watchlist w WHERE w.asset_id=a.asset_id) AS watched FROM assets a LEFT JOIN price_bars b ON b.bar_id=(SELECT x.bar_id FROM price_bars x WHERE x.asset_id=a.asset_id ORDER BY x.session_date DESC,x.provider LIMIT 1) LEFT JOIN price_revisions p ON p.revision_id=b.latest_revision_id ORDER BY a.ticker LIMIT ?", (limit,))
+    def list_assets(self, limit=5000, *, as_of=None):
+        # Select the latest revision known at the same cutoff as the API.
+        # A future revision must not hide an earlier, still valid observation.
+        cutoff = iso(as_of)
+        day = instant(cutoff).astimezone(SAO_PAULO).date().isoformat()
+        return self.rows("""WITH known_prices AS (
+            SELECT b.asset_id,b.session_date,b.adjustment,b.provider,r.*,
+                ROW_NUMBER() OVER (PARTITION BY b.bar_id ORDER BY
+                    r.available_at DESC,r.rowid DESC) AS revision_rank
+            FROM price_bars b JOIN price_revisions r ON r.bar_id=b.bar_id
+            WHERE b.session_date<=? AND r.available_at<=? AND r.fetched_at<=?
+                AND (r.market_timestamp IS NULL OR r.market_timestamp<=?)
+        ), latest_prices AS (
+            SELECT *,ROW_NUMBER() OVER (PARTITION BY asset_id ORDER BY
+                session_date DESC,provider,adjustment,bar_id) AS asset_rank
+            FROM known_prices WHERE revision_rank=1
+        )
+        SELECT a.*,p.close AS price,p.market_timestamp,p.fetched_at AS price_fetched_at,
+            p.quality_flags_json AS price_quality_flags_json,p.session_date,p.adjustment,
+            p.provider AS price_provider,
+            EXISTS(SELECT 1 FROM watchlist w WHERE w.asset_id=a.asset_id) AS watched
+        FROM assets a LEFT JOIN latest_prices p ON p.asset_id=a.asset_id AND p.asset_rank=1
+        ORDER BY a.ticker LIMIT ?""", (day,cutoff,cutoff,cutoff,limit))
 
     def list_articles(self, limit=100):
         return self.rows("SELECT a.*,r.* FROM articles a JOIN article_revisions r ON r.revision_id=a.latest_revision_id ORDER BY r.published_at DESC,a.article_id LIMIT ?", (limit,))

@@ -1,0 +1,8 @@
+# Operational attestations and generated QA are local; tracked fixtures remain tracked.
+/qa*/
+/cli-probes/
+/cli-validation.json
+/install-manifest.json
+/live-validation.json
+/python-dependencies.json
+/test-results.txt

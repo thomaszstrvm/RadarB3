@@ -34,3 +34,7 @@ Object.assign(labels,{
   calendar_window_unverified:'Calendário sem verificação para toda a janela solicitada.',
   missing_market_sessions:'Faltam sessões esperadas nesta captura.',
 });
+
+Object.assign(labels,{provider_state_clock_invalid:'Registro operacional com horário inválido ou futuro; diagnóstico não confirmado nesse corte.'});
+
+Object.assign(labels,{price_capture_invalid:'Captura de preços inválida; dados indisponíveis até uma nova captura válida.'});
