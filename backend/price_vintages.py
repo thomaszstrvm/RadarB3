@@ -222,7 +222,7 @@ def adjusted_metrics(normalized, calendar_envelope, as_of, evidence_id):
     # An unfinished current period is not part of an ended daily series.
     scheduled={row['session_date']:row for row in rows}
     bars=[bar for bar in normalized['bars'] if first<=bar['session_date']<=today and
-          (bar['session_date'] not in scheduled or not scheduled[bar['session_date']]['closes_at'] or instant(scheduled[bar['session_date']]['closes_at'])<=instant(as_of))]
+          (bar['session_date'] not in scheduled or not scheduled[bar['session_date']]['closes_at'] or instant(scheduled[bar['session_date']]['closes_at'])<instant(as_of))]
     bars=calendar_from_rows(rows,bars,as_of)
     def metric(key,label,needed,unit,formula,operation):
         reason='insufficient_observations' if len(bars)<needed else None

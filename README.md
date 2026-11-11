@@ -1,140 +1,115 @@
 # Radar B3
 
-Aplicativo local de investigação de eventos e ações/units da B3. API FastAPI, React/TypeScript, SQLite WAL e worker serial com fila durável. Nenhuma corretora, ordem ou serviço pago novo. Interface em português.
+Aplicação pessoal local para investigar eventos e ações/units da B3. FastAPI, React/TypeScript, SQLite WAL e worker único. Sem corretora, ordens ou fallback de API paga. Sinais experimentais, não garantia de retorno.
 
-**Evolução do código em 04/11/2026:** Mercado mantém modo, executor e cobertura visíveis; Fontes apresenta limites do RSS e motivos em desktop e celular. Contadores elegíveis, cobertura da janela e espera pelo fechamento seguem o [ADR 0017](docs/decisions/0017-cobertura-e-estado-temporal.md). Código atualizado e build candidato não comprovam, por si, que a instância em execução foi reiniciada. Consulte `/api/v1/operations` para o estado dos processos; o diário operacional permanece arquivado localmente.
+## Repositório privado e clone
 
-**Verificação operacional:** consulte `/api/v1/operations` antes de iniciar outra instância. O diário de instalação, coleta e disponibilidade permanece no acervo local; esta versão do README não certifica o estado atual do serviço.
+O Git contém código, contratos, testes, documentação e fixtures revisadas. Bancos,
+backups, credenciais, atestado operacional de IA, dependências e builds ficam locais.
+Os relatórios completos em `docs/qa-20261110` e `docs/qa-20261111` citados abaixo
+são evidências locais; não acompanham o clone. As fixtures QA já rastreadas são
+mantidas porque os testes dependem delas.
 
-## Iniciar no PC validado
-
-Se a instalação já responder em 8765, use a instância existente. Os comandos abaixo são para uma inicialização deliberada após verificar processos e lease. Abra PowerShell nesta pasta:
-
-```powershell
-Set-Location '<pasta-do-projeto>'
-.\.venv\Scripts\python.exe run.py --no-worker --execution-mode collection-only
-```
-
-Comando acima: consulta sem worker e sem inferência. Abra **http://127.0.0.1:8765** e mantenha o terminal aberto. **Ctrl+C** encerra os processos iniciados pelo launcher. O atalho equivalente é `Start-Radar.ps1 -NoWorker -ExecutionMode collection-only`; não é necessário alterar ExecutionPolicy global. Se a porta estiver ocupada, acrescente `--port 8766`; o programa não interrompe outro aplicativo.
-
-Modos disponíveis (coleta sem IA foi ativada em 29/10; não execute outra instância sobre a mesma base):
+Após clonar, execute com o Python instalado:
 
 ```powershell
-# Coleta automática, sem IA: mantém análises da fila aguardando, sem tentativas.
-.\.venv\Scripts\python.exe run.py --execution-mode collection-only
-# Operação com IA: somente após autorização, com quota e homologação vigentes.
-.\.venv\Scripts\python.exe run.py --execution-mode analysis-enabled
+python -B scripts/setup_git_excludes.py
 ```
 
-Pare a instância anterior com Ctrl+C antes de mudar o modo. Para retornar à consulta, use o primeiro comando com `--no-worker`. Para voltar da IA à coleta, pare e inicie `collection-only`; os jobs e contadores não são apagados. `run.py` sem opções agora inicia coleta sem IA; nunca use o comando abreviado como consulta sem worker. Ambos os filhos recebem o mesmo RADAR_EXECUTION_MODE. Não misture processos iniciados à parte: o painel avisa divergência, mas não desliga um worker independente.
+Esse comando acrescenta exclusões a `.git/info/exclude`, preserva regras existentes
+e não altera configurações globais. Uma segunda execução não regrava o arquivo.
+O `.gitignore` raiz permanece idêntico ao pacote original verificado; `docs/.gitignore`
+protege automaticamente atestados e QA gerada. Não use `git add .` como revisão de conteúdo.
 
-O painel operacional de coleta já foi instalado em 29/10. As correções de interface de 30/10 ficam em build QA separado, sem promoção automática. Para uma futura promoção autorizada, pare a instância e prepare backup/ensaio e cópia revisáveis:
+Ambiente Python, `node_modules` e `frontend/dist` precisam ser preparados conforme
+os lockfiles. Os quatro testes do launcher exigem um build frontend existente.
+Clonar não transfere banco real, login, homologação de IA nem tarefas agendadas,
+e não inicia a aplicação. O histórico remoto inclui apenas a branch do projeto;
+refs internas de checkpoints de ferramentas permanecem locais.
+
+## Estado e continuidade
+
+Este repositório reúne o aplicativo, contratos, testes e decisões técnicas.
+Observações de uma instalação, autorizações, consumo de IA e recibos detalhados
+permanecem no acervo local. `ENTREGA.md` contém somente o resumo compartilhável.
+
+As correções temporais e os utilitários de operação têm evidências históricas
+arquivadas localmente. Elas não comprovam o estado atual do serviço, da tarefa
+diária ou do executável homologado. Não reutilize PIDs, builds ou autorizações
+de uma descrição antiga; faça o diagnóstico do ambiente antes de atuar.
+
+## Diagnóstico somente leitura
+
+Comando estável disponível nesta instalação:
 
 ```powershell
-$radarStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-.\.venv\Scripts\python.exe scripts/backup.py backup data/real/radar.sqlite3 "backups/before-collection-$radarStamp.sqlite3"
-.\.venv\Scripts\python.exe scripts/backup.py restore "backups/before-collection-$radarStamp.sqlite3" "backups/restore-check-$radarStamp.sqlite3"
-# Só prossiga se ambos confirmarem integridade; mantenha esses destinos novos.
-Copy-Item -LiteralPath frontend/dist -Destination "backups/frontend-before-$radarStamp" -Recurse
-Copy-Item -Path 'docs/qa-20261030/ui-regressions/frontend/dist/*' -Destination frontend/dist -Recurse -Force
+.\.venv\Scripts\python.exe -B scripts/diagnose.py --db data/real/radar.sqlite3 --receipts-dir data/real/daily-receipts
 ```
 
-O procedimento de backup/ensaio foi executado na ativação de 29/10, não para promover as correções de 30/10. A coluna aditiva execution_mode já foi aplicada nessa ativação. Os comandos acima são um procedimento futuro: confira o relatório do build escolhido antes de executá-los. Depois selecione um dos comandos de modo acima. Para retornar à interface anterior, pare os processos e copie o conteúdo de `backups/frontend-before-<stamp>` de volta para frontend/dist, mantendo o backup. Não restaure banco por cima da produção nem apague ledger para trocar o modo. Restauração real de dados exige decisão separada e destino novo.
+Em cópia isolada, use o Python instalado e caminhos explícitos para a raiz e os dados que deseja observar. O comando não instancia Store, não migra banco, não inicia processos do produto e não executa Codex. Usa SQLite ro/query_only e transação, incluindo WAL; lê dois GETs localhost por validate_live.py, sem proxy/redirecionamento. No Windows, consulta somente a tarefa conhecida via PowerShell, oculto. `--skip-windows-task` identifica explicitamente que a agenda não foi observada.
 
-No modo sem IA, claim ignora analyse/analysis, execução e runner recusam inferência e a API rejeita análise manual/retry com 409. blocked/paused não retomam sozinhos; queued/retry_wait ficam guardados. Coleta pode avançar na fila. `/api/v1/operations` distingue worker ativo/ausente/heartbeat vencido, homologação, modo, última coleta bem-sucedida, último dado recebido e snapshot da análise. O horário de consulta do painel não é atualização financeira.
+O JSON sai em stdout e separa serviço indisponível, erro do observador, coleta parcial/perdida, clocks de dados, calendário e compatibilidade do atestado. Não verifica login atual nem envia inferência. `database_idle=true` não autoriza parar processo: falta confirmar identidade atual da árvore e do socket.
 
-Banco real em `data/real/radar.sqlite3`. Para abrir um perfil separado e vazio, `run.py --mode demo`; o banner identifica demonstração e coleta externa fica desativada. Nenhum dado fictício é inserido automaticamente. Para consulta sem agenda, `run.py --no-worker`.
+Para verificar um backup específico, forneça **ambos** `--backup-report <recibo.json>` e `--backup-file <copia.sqlite3>`. Confere hash e conteúdo real contra o recibo. Data de verificação não é data de atualização dos dados. Sem esses argumentos, backup permanece não verificado, não saudável por omissão.
 
-O worker executa notícias a cada 60 minutos e catálogo semanalmente enquanto estiver ligado. Ao reiniciar, agrupa execuções perdidas e recupera leases/checkpoints. Preços automáticos exigem calendário B3 verificado; **Atualizar dados** permite coleta manual. Não há serviço instalado no Windows, tarefa agendada ou promessa de 24 horas.
+Saídas: 0 = observações requeridas sem ressalvas cobertas pelo comando; 1 = atenção/limitação conhecida (por exemplo serviço parado, coleta parcial, backup/agenda não observados ou atestado indisponível); 2 = falha de observação ou verificação. Nenhum código autoriza operação, prova cobertura financeira ou substitui inspeção do JSON.
 
-## Usar e verificar
+## Modos: não são equivalentes
 
-1. **Atualizar dados** enfileira catálogo, notícias, preços e macro. Em **Execuções**, veja cada etapa e falha; cancelamento e repetição são persistentes.
-2. **Mercado** mostra ações/units elegíveis e cadastro ainda sem classificação. Favoritos não limitam a varredura. Busque `PETR4`, abra o detalhe e confira série, datas e evidências.
-3. **Eventos** lista notícias agrupadas conservadoramente, com link da fonte e nível de acesso. Só manchete não vira hipótese forte.
-4. **Fontes e cobertura** distingue não pesquisado, bloqueado, parcial e disponível. Três meses são calendário em São Paulo, não 90 dias fixos. RSS não garante arquivo de todo esse período.
-5. **Analisar ativo** depende do modo com IA e da homologação; fica indisponível em coleta sem IA. Análises históricas permanecem consultáveis com seu snapshot original. Uma coleta nova não as recalcula. Limite diário é compartilhado entre uso manual e automático.
-6. **Configurações** preserva frequência, horizontes 30/90 e limite de análises. Não permite ativar IA não homologada nem qualquer fallback pago.
+| Modo | Efeito |
+|---|---|
+| `collection-only --no-worker` | Consulta; sem worker, coleta ou inferência por este processo. A tarefa Windows separada continua independente. |
+| `collection-only` | Worker geral; agenda/coleta, sem IA. Pode conflitar com a tarefa diária. Não iniciar simultaneamente sem reconciliação. |
+| `manual-analysis` | Worker dedicado a pedidos manuais; sem agenda/coleta. Requer autorização, quota e atestado vigente. |
+| `analysis-enabled` | Worker pode executar análises/agenda conforme configuração. Não usar como modo de consulta. |
 
-## Utilitários de observação e coleta pontual
+`run.py` sem opções inicia worker de coleta. `Start-Radar.ps1` não aceita manual-analysis. Configuração habilitada não vence restrição do modo nem gate de homologação.
 
-`validate_live.py` agora é somente leitura: não cria alertas, não solicita análises, não inicializa Store e não executa worker. Consulta a base com SQLite ro/query_only e os GETs locais de saúde/estado operacional, sem proxy ou redirecionamento. Exemplo de observação (não executado contra o real nesta correção):
+## Início, parada e recuperação
+
+Procedimento completo e condições: [roteiro operacional](docs/operacao-local.md). Nenhuma ação abaixo foi executada neste ciclo.
+
+Após autorização e reconciliação de processos, porta, banco, lease e build aprovado, o início de consulta é:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/validate_live.py --db data/real/radar.sqlite3
+.\.venv\Scripts\python.exe -B run.py --mode real --no-worker --execution-mode collection-only
 ```
 
-O JSON sai em stdout; nenhum relatório é gravado automaticamente. A comparação de ledger/runs informa mudanças no intervalo, sem atribuí-las ao verificador nem afirmar ausência global de IA. Código de saída 2 indica erro de consulta local. Isso não homologa qualidade financeira ou disponibilidade atual da assinatura.
+Bind somente `127.0.0.1:8765`. Não iniciar segunda instância para contornar porta ocupada. Não mudar modo nem usar botão de análise para testar disponibilidade. Não iniciar worker para resolver automaticamente uma pendência de diagnóstico.
 
-`collect_once.py` exige `--db` explícito e permissão operacional para coleta. Não o execute enquanto o worker estiver ativo: ele recusa a lease antes de enfileirar. Sempre força coleta sem IA, mesmo com ambiente analysis-enabled, e acompanha só seu refresh e filhos. `--request-key` identifica uma retomada do mesmo lote; `--timeout` (300 segundos por padrão) é conferido **entre jobs**, e `--max-iterations` (1000) limita o laço. Um coletor já em execução termina ou atinge seus próprios limites de transporte. Resultado parcial/limite retorna código 2; código 0 exige todos os filhos bem-sucedidos. O refresh inclui catálogo, notícias, preços e macro: não é um comando de mera consulta.
+Antes de Ctrl+C no terminal próprio: exigir zero jobs queued/running/retry_wait, zero runs prepared/started, confirmar a árvore/identidade atual, impedir novo pedido concorrente e revalidar. O launcher tem fallback terminate/kill após oito segundos; **não usar Ctrl+C durante análise** nem prometer parada totalmente graciosa. Sem terminal/identidade confiável, parar o procedimento, não usar kill global ou PID histórico. O helper de parada de QA é específico da árvore antiga e não é comando genérico homologado para este ciclo.
 
-As correções desses utilitários foram exercitadas apenas com bases temporárias e executores falsos. Não houve coleta pontual real nesta rodada. Em Execuções, a interface corrigida oferece cancelamento e retomada separadamente; retry de análise continua desabilitado quando a API não permite IA. A próxima tentativa usa o campo not_before do contrato.
+Depois: verificar saída dos processos próprios, porta, lease e preservação. Não reiniciar nem reenviar inferência para resolver resultado incerto. Nunca restaurar ledger antigo sobre produção.
 
-## Dependências e reconstrução
+## Backup/restauração verificáveis
 
-Testado em Windows x64, Python 3.12.0, Node 24.19.0, npm 11.17.0. Não houve teste de outro sistema operacional. Recrie o ambiente apenas dentro deste projeto:
+O utilitário mantém a interface existente e acrescenta recibo exclusivo:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.lock
-cd frontend
-npm.cmd ci --ignore-scripts
-npm.cmd run build
-cd ..
+.\.venv\Scripts\python.exe -B scripts/backup.py backup data/real/radar.sqlite3 backups/NOVO.sqlite3 --report backups/NOVO.json
+.\.venv\Scripts\python.exe -B scripts/backup.py restore backups/NOVO.sqlite3 backups/ENSAIO-NOVO.sqlite3 --report backups/ENSAIO-NOVO.json
 ```
 
-O SQLite do Python original era 3.42.0. O projeto carrega **3.54.1** de `vendor/sqlite/sqlite3.dll`, obtido do site oficial, hash conferido antes de carregar. Sua proveniência e licença estão ao lado. Não substitua DLL global. Se ausente, `.\.venv\Scripts\python.exe scripts/install_sqlite.py` valida versão/hash oficial antes de instalar somente aqui. O launcher recusa WAL sem versão corrigida.
+**Exemplos de uso, não comandos de ativação automática.** Os destinos devem ser inéditos, inclusive sidecars e recibos. SQLite backup preserva WAL comprometido; confere integridade, FK, schema e hashes tipados de todas as tabelas, incluindo BLOB e quota consumed/uncertain. Não copiar só o arquivo principal de banco aberto. Falha não apaga fonte nem destino parcial; não usar cópia sem verificação positiva.
 
-`requirements.lock` e `frontend/package-lock.json` fixam dependências; instalação requer internet para os registros oficiais quando não há cache. Nenhuma skill de terceiros foi instalada. Os workflows locais do pacote orientam design e revisão.
+Restaure ensaios somente em destinos novos. Uma verificação de cópia histórica não torna seus dados atuais nem autoriza restaurá-la sobre a base ativa. Agenda de backup, retenção e exclusão exigem definição própria; consulte o roteiro operacional.
 
-## Testes
+## Validação reproduzível
 
-O baseline local inclui uma lista revisada de helpers e documentos públicos necessários aos testes em `docs/qa*`. Os demais históricos, bancos, dependências e builds continuam fora do Git. As exclusões adicionais desta instalação estão em `.git/info/exclude`; esse arquivo local não acompanha um clone. Evite adicionar o diretório inteiro sem revisão. `.gitattributes` preserva os bytes dos 34 arquivos da especificação original, inclusive com `core.autocrlf` ativo.
-
-`docs/cli-validation.json` é um atestado operacional local e não faz parte do baseline. A fixture do operador usa configuração e atestado sintéticos desde o início. Para os testes de launcher, prepare também o build frontend; as dependências precisam existir no ambiente de teste. Isso não equivale a uma instalação limpa verificada.
+Usando o Python instalado, rode o runner em **diretório de saída inexistente**:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest tests -q
-.\.venv\Scripts\python.exe scripts/verify_spec.py
-cd frontend
-npm.cmd test
-npm.cmd run build
+python -B scripts/validate_release.py --mode operational --output-dir CAMINHO-NOVO
+python -B scripts/validate_release.py --mode full --output-dir OUTRO-CAMINHO-NOVO
+python -B scripts/verify_spec.py
 ```
 
-Testes comuns usam bases temporárias e não consomem quotas de dados/IA. No sandbox de execução usado durante desenvolvimento, o socketpair local do asyncio foi bloqueado; testes da API foram executados em terminal local autorizado. A documentação de validação registra resultados reais, sem converter build em prova de qualidade financeira.
+Veja [limites e detalhes](docs/release-validation.md). O runner bloqueia rede externa, CLI real e escritas/bancos fora da saída; somente os Python instalados são permitidos para testes revisados. Não é sandbox universal; filhos Python não herdam o audit hook. O teste Windows usa árvore Python benigna própria, não serviço real. Relatórios não são somados entre rodadas repetidas.
 
-`jsdom` 26.1.0 e seus tipos são dependências de desenvolvimento fixadas no lockfile. `terminalDom.test.tsx` importa `jsdom` normalmente; `npm ci` prepara o teste React/DOM sem pasta auxiliar em docs. Não entram no bundle de produção. Nesta entrega, instalação limpa, testes, TypeScript e Vite foram executados em `docs/qa-20261029/collection-only-qa/frontend-clean`, preservando frontend/node_modules e frontend/dist operacionais. Para repetir sem alterar o site, copie src, public (se houver), index.html, package*.json, tsconfig*.json e vite.config.* para um diretório **novo**, então execute ali `npm.cmd ci --ignore-scripts`, `npm.cmd test` e `npm.cmd run build`. Não reutilize dist/node_modules da instalação operacional como prova de instalação limpa.
+Frontend sem mudança neste ciclo. Os 260 testes e build de 10/11 são evidência histórica, não nova execução. Instalação limpa ainda não revalidada. Os lockfiles continuam fixos; instalar dependências depende de decisão separada. A DLL SQLite local é verificada por hash, sem substituição global.
 
-`scripts/probe_providers.py --phase core|discovery|feeds|bcb_bounded` e `scripts/collect_once.py` fazem rede real e são separados dos testes normais. Probes gravam metadados datados; não usar repetidamente sem necessidade. Coleta reserva orçamento local antes da requisição.
+## Limites atuais
 
-## Configuração sem segredos
+Presença de preços para uma amostra não significa cobertura ampla do universo elegível. Notícias, fundamentos e retorno em 63 intervalos dependem de cobertura suficiente. Uma análise conserva seu corte; coleta nova não recalcula hipóteses automaticamente. Calendário documental tem intervalo finito e homologação passada não cobre binário novo. Disponibilidade contínua depende de comprovar rotina diária, backup recorrente e critérios de recuperação.
 
-Os exemplos originais em `config/` e `.env.example` são preservados. Preferências de uso ficam no SQLite; feeds operacionais homologados em `config/verified-feeds.json`. `BRAPI_TOKEN` opcional deve ser fornecido como variável de ambiente somente se o usuário já possuir um token gratuito. O aplicativo não lê automaticamente `.env`, não cria conta e não compra planos. Sem token, consulta apenas os quatro símbolos de teste documentados; os demais ficam com lacuna visível.
-
-CLI **0.166.0-alpha.5.1** e gpt-6-astra foram homologados em 29/10; consulte o hash e a data em docs/cli-validation.json. Isso é evidência datada, não garantia de binário ainda instalado. O atestado, enabled=true e automatic_analysis=true não foram alterados nesta etapa; o modo de processo pode impedir inferência mesmo com essas flags. Em analysis-enabled, a agenda e os pedidos existentes continuam sujeitos ao teto persistente de 10 chamadas/dia, incluindo reparos e tentativas incertas. Não há fallback pago. O runner verifica o modo antes de quota e mantém MXC/ferramentas desativadas; skip_host_skill_discovery continua experimental. A política de processo foi adicionada sem repetir homologação real.
-
-## Backup e restauração
-
-Com o aplicativo ligado, o backup usa a API SQLite, não cópia simples do `.db` em WAL:
-
-```powershell
-.\.venv\Scripts\python.exe scripts/backup.py backup data/real/radar.sqlite3 backups/radar-2026-10-26.sqlite3
-```
-
-Destino deve ser novo; o comando recusa sobrescrever. Antes de futura ativação que altere dados, faça um backup novo e ensaie a restauração em outro destino, sem substituir produção:
-
-```powershell
-.\.venv\Scripts\python.exe scripts/backup.py restore backups/radar-2026-10-26.sqlite3 backups/restore-check-novo.sqlite3
-```
-
-Não copie `.db` aberto ignorando `.wal`. Logs/diagnósticos nunca devem conter tokens. As exportações locais são JSON/CSV com proveniência; CSV neutraliza prefixos de fórmula.
-
-## O que não está homologado
-
-- Homologação de IA não cobre outros sistemas/versões nem garante automaticamente toda alegação futura.
-- Calendário oficial de pregões, ajustes societários e retorno total; preços disponíveis não garantem comparabilidade.
-- Ingestão contábil CVM e mapeamento de exposição econômica indireta. Há probe CVM, mas fundamentos ausentes ficam null.
-- Cobertura histórica integral de notícias, independência perfeita de republicações e identidade histórica de emissores. IDs atuais usam símbolos do fornecedor com a limitação registrada.
-- Não há histórico prospectivo maturado de hipóteses nem resultados financeiros inventados.
-
-Os arquivos originais do planejamento são preservados; `scripts/verify_spec.py` confere seus hashes mesmo com código novo no projeto. Decisões e explicação técnica em `docs/implementation-decisions.md` e `docs/engineering-notes.md`.
+Diretivas: `AGENTS.md`, contratos em `schemas/`, configurações sem segredos e documentos 01–09. `scripts/verify_spec.py` protege o ZIP e os 34 originais. Não ler credenciais do Codex, alterar MXC, quotas, schema financeiro, prompts ou agenda para contornar bloqueios.

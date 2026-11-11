@@ -37,13 +37,16 @@ def provider_view(app):
     operations = routes["/api/v1/operations"]()
     source = next(item for item in sources["items"] if item["id"] == "bcb_sgs")
     collection = operations["collection"]
-    assert collection["sources"] == [{
+    assert [item for item in collection["sources"] if item["provider_id"] == "bcb_sgs"] == [{
         "provider_id": "bcb_sgs",
         "last_attempt_at": source["last_attempt_at"],
         "last_success_at": source["last_success_at"],
         "error_code": source["error"],
         "next_attempt_at": source["next_attempt_at"],
     }]
+    calendar = next(item for item in collection["sources"] if item["provider_id"] == "market_calendar")
+    assert calendar["error_code"] == "calendar_date_unverified"
+    assert calendar["last_success_at"] is None
     assert collection["latest_macro_fetch"] == source["last_success_at"]
     return source
 

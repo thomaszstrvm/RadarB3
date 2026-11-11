@@ -3,6 +3,7 @@ from .timeutil import iso, instant, SAO_PAULO
 from contextlib import nullcontext
 import json
 from .session_continuity import calendar_status
+from .source_status import provider_state_at, latest_clock, known_clock
 
 
 def manual_quota(store, connection=None, now=None):
@@ -68,26 +69,41 @@ def job_admission(store, process_mode, connection=None, now=None):
         return {'allowed_kinds': kinds, 'reason': 'ready', 'expires_at': lease['expires_at']}
 
 
-def collection_state(store, news_ids):
+def collection_state(store, news_ids, now=None):
+    now = now or iso()
+    clock_errors = {}
     def latest(table):
-        return store.rows('SELECT MAX(fetched_at) AS latest FROM ' + table)[0]['latest']
+        columns = {row['name'] for row in store.rows('PRAGMA table_info(' + table + ')')}
+        fields = 'fetched_at,available_at' if 'available_at' in columns else 'fetched_at'
+        rows = store.rows('SELECT ' + fields + ' FROM ' + table)
+        clocks = []
+        for row in rows:
+            if any(known_clock(value, now)[1] for value in row.values()):
+                clock_errors[table] = 'data_clock_invalid'
+                continue
+            clocks.append(row['fetched_at'])
+        return latest_clock(clocks, now)
+    projected = [provider_state_at(row, now) for row in store.rows(
+        "SELECT * FROM provider_state WHERE provider_id<>'codex_cli' ORDER BY provider_id")]
     def success(ids):
-        if not ids:
-            return None
-        return store.rows('SELECT MAX(last_success_at) AS latest FROM provider_state WHERE provider_id IN (' + ','.join('?' for _ in ids) + ')', tuple(ids))[0]['latest']
-    sources = store.rows("SELECT provider_id,last_attempt_at,last_success_at,error_code,next_attempt_at FROM provider_state WHERE provider_id<>'codex_cli' ORDER BY provider_id")
-    scheduled = calendar_status(store,iso())
+        return latest_clock((row['last_success_at'] for row in projected if row['provider_id'] in ids), now)
+    sources = [{key: row.get(key) for key in ('provider_id','last_attempt_at','last_success_at','error_code','next_attempt_at')}
+               | ({'reason': row['clock_error'], 'details': {'invalid_clock_fields':row['invalid_clock_fields']}}
+                  if row.get('clock_error') else {}) for row in projected]
+    scheduled = calendar_status(store,now)
     if scheduled is not None:
         previous = next((item for item in sources if item['provider_id']=='market_calendar'), {})
         sources = [item for item in sources if item['provider_id']!='market_calendar'] + [
             {'provider_id':'market_calendar','last_attempt_at':previous.get('last_attempt_at'),'last_success_at':scheduled['available_at'],
-             'error_code':scheduled['error_code'],'next_attempt_at':scheduled['next_attempt_at'],
-             'reason':scheduled['reason'],'details':scheduled['details']}]
+             'error_code':previous.get('error_code') if previous.get('reason') else scheduled['error_code'],
+             'next_attempt_at':scheduled['next_attempt_at'],
+             'reason':previous.get('reason') or scheduled['reason'],
+             'details':{**scheduled['details'], **previous.get('details',{})}}]
     latest_price=latest('price_revisions')
     if store.rows("SELECT 1 FROM sqlite_master WHERE name='price_vintages' AND type='table'"):
-        latest_price=max(filter(None,(latest_price,latest('price_vintages'))),default=None)
+        latest_price=latest_clock((latest_price,latest('price_vintages')), now)
     return {'sources': sources,
             'latest_news_fetch': success(news_ids), 'latest_price_fetch': success(['brapi_prices']),
             'latest_macro_fetch': success(['bcb_sgs']),
             'latest_news_data_at': latest('article_revisions'), 'latest_price_data_at': latest_price,
-            'latest_macro_data_at': latest('macro_observations')}
+            'latest_macro_data_at': latest('macro_observations'), 'data_clock_errors': clock_errors}

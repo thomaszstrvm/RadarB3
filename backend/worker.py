@@ -32,6 +32,33 @@ class Blocked(RuntimeError):
     pass
 
 
+def load_source_definitions(config_dir):
+    """Read configured sources and documentary probes; never start collection."""
+    config_dir = Path(config_dir)
+    path = config_dir / "news-sources.json"
+    if not path.exists():
+        return []
+    sources = json.loads(path.read_text(encoding="utf-8-sig"))["sources"]
+    verified_path = config_dir / "verified-feeds.json"
+    if verified_path.exists():
+        document = json.loads(verified_path.read_text(encoding="utf-8-sig"))
+        verified = {s["id"]: s for s in document["sources"]}
+        from urllib.parse import urlsplit
+        for source in sources:
+            item = verified.get(source["id"], {})
+            if item:
+                source["feed_checked_at"] = item.get("checked_at", document.get("checked_at"))
+                if "last_operational_probe_at" in item:
+                    source["last_operational_probe_at"] = item["last_operational_probe_at"]
+            if item.get("status") == "rss_metadata_verified":
+                source["rss_urls"] = item["rss_urls"]
+                source["rss_allowed_hostnames"] = [urlsplit(url).hostname for url in item["rss_urls"]]
+                source["rss_sections"] = item.get("rss_sections", {url: "Business" if source["id"] == "us_nyt" else "World" for url in item["rss_urls"] if source["id"] in {"us_nyt", "us_fox"}})
+            elif item.get("status"):
+                source["feed_status"] = item["status"]
+    return sources
+
+
 class Worker:
     def __init__(self, store: Store, config_dir: str | Path | None = None, schema_dir: str | Path | None = None, handlers=None, execution_mode=None, reconciliation_mutex_factory=AnalysisMutex):
         self.store = store
@@ -48,23 +75,7 @@ class Worker:
         self.reconciliation_mutex_factory = reconciliation_mutex_factory
 
     def sources(self):
-        path = self.config_dir / "news-sources.json"
-        if not path.exists():
-            return []
-        sources = json.loads(path.read_text(encoding="utf-8-sig"))["sources"]
-        verified_path = self.config_dir / "verified-feeds.json"
-        if verified_path.exists():
-            verified = {s["id"]: s for s in json.loads(verified_path.read_text(encoding="utf-8-sig"))["sources"]}
-            from urllib.parse import urlsplit
-            for source in sources:
-                item = verified.get(source["id"], {})
-                if item.get("status") == "rss_metadata_verified":
-                    source["rss_urls"] = item["rss_urls"]
-                    source["rss_allowed_hostnames"] = [urlsplit(url).hostname for url in item["rss_urls"]]
-                    source["rss_sections"] = item.get("rss_sections", {url: "Business" if source["id"] == "us_nyt" else "World" for url in item["rss_urls"] if source["id"] in {"us_nyt", "us_fox"}})
-                elif item.get("status"):
-                    source["feed_status"] = item["status"]
-        return sources
+        return load_source_definitions(self.config_dir)
 
     def _heartbeats(self):
         while not self.stop_event.wait(15):

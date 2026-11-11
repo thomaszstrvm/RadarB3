@@ -121,8 +121,29 @@ class RSSAdapter:
     def collect(self, as_of=None):
         if not self.source.get("rss_urls"):
             reason = self.source.get("feed_status") if self.source.get("feed_status") not in {None, "discovery_and_probe_required"} else "rss_endpoint_not_verified"
-            self.store.provider_status(self.source["id"], "unavailable", reason)
-            return {"status": "blocked", "reason": reason, "count": 0}
+            evaluation = {
+                "evaluated_at": iso(), "reason": reason, "network_attempted": False,
+                "documented_probe_at": self.source.get("last_operational_probe_at"),
+                "documented_check_at": self.source.get("feed_checked_at"),
+            }
+            # This is a local configuration check, not a new HTTP observation.
+            # Preserve earlier network outcomes and documentary date precision.
+            with self.store.transaction() as con:
+                row = con.execute("SELECT details_json FROM provider_state WHERE provider_id=?",
+                                  (self.source["id"],)).fetchone()
+                try:
+                    details = json.loads(row["details_json"]) if row else {}
+                except (ValueError, TypeError):
+                    raise FetchError("provider_state_details_invalid") from None
+                if not isinstance(details, dict):
+                    raise FetchError("provider_state_details_invalid")
+                details["configuration_evaluation"] = evaluation
+                con.execute("""INSERT INTO provider_state
+                    (provider_id,status,error_code,details_json) VALUES(?,?,?,?)
+                    ON CONFLICT(provider_id) DO UPDATE SET details_json=excluded.details_json""",
+                    (self.source["id"], "unavailable", "rss_endpoint_not_verified", dumps(details)))
+            return {"status": "blocked", "reason": reason, "count": 0,
+                    "configuration_evaluation": evaluation}
         counts = {"created": 0, "revised": 0, "duplicate": 0, "outside_window": 0, "future_at_cutoff": 0}
         failures = []
         successes = 0

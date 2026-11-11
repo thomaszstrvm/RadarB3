@@ -19,7 +19,7 @@ def calendar_from_rows(rows, bars, as_of):
         if any(day not in by_date for day in required):
             return [dict(bar, calendar=None) for bar in bars]
     knowledge_at = max((r['verified_at'] for r in rows), default=None)
-    expected = next((r['session_date'] for r in reversed(rows) if r['is_open'] and instant(r['closes_at']) <= cutoff), None)
+    expected = next((r['session_date'] for r in reversed(rows) if r['is_open'] and instant(r['closes_at']) < cutoff), None)
     previous = None
     span = []
     metadata = {}
@@ -29,7 +29,7 @@ def calendar_from_rows(rows, bars, as_of):
         span.append(row)
         if row['is_open']:
             coherent = len({(r['source'], r['version']) for r in span}) == 1
-            if coherent and today in by_date and instant(row['closes_at']) <= cutoff:
+            if coherent and today in by_date and instant(row['closes_at']) < cutoff:
                 metadata[row['session_date']] = {
                     'session_date': row['session_date'], 'closes_at': row['closes_at'],
                     'previous_open_session': previous,

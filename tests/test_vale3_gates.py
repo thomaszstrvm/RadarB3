@@ -133,6 +133,7 @@ def test_even_expired_worker_lease_requires_operational_reconciliation(store):
 def test_calendar_status_is_derived_without_rewriting_provider_history(store,monkeypatch):
     from backend.session_continuity import calendar_status
     from backend.operations import collection_state
+    monkeypatch.setattr('backend.core.iso',lambda value=None: iso(value or CUTOFF))
     store.provider_status('market_calendar','unavailable','verified_session_calendar_required')
     baseline=store.rows('SELECT * FROM provider_state')
     import_one(store)
@@ -158,6 +159,7 @@ def test_api_calendar_status_and_coverage_are_truthful_without_schedule(store,mo
     from backend.api import create_app
     monkeypatch.setattr('backend.api.ai_status',lambda:{'enabled':False,'reason':'isolated'})
     monkeypatch.setattr('backend.api.iso',lambda value=None: iso(value or CUTOFF))
+    monkeypatch.setattr('backend.core.iso',lambda value=None: iso(value or CUTOFF))
     store.provider_status('market_calendar','unavailable','verified_session_calendar_required')
     baseline=store.rows('SELECT * FROM provider_state')
     import_one(store)
@@ -208,7 +210,9 @@ def test_closed_tail_and_market_close_determine_expected_last():
     rows=calendar.package_rows(document())
     prior=calendar_from_rows(rows,synthetic_bars(2),CUTOFF)
     assert prior[-1]['calendar']['expected_last_session']=='2026-10-30'
-    after=calendar_from_rows(rows,synthetic_bars(2),'2026-11-03T22:00:00Z')
+    exact=calendar_from_rows(rows,synthetic_bars(2),'2026-11-03T22:00:00Z')
+    assert exact[-1]['calendar']['expected_last_session']=='2026-10-30'
+    after=calendar_from_rows(rows,synthetic_bars(2),'2026-11-03T22:00:00.000001Z')
     assert after[-1]['calendar']['expected_last_session']=='2026-11-03'
     assert all(bar['calendar'] is None for bar in calendar_from_rows(rows,synthetic_bars(2),'2026-11-04T12:00:00Z'))
     doc=document();doc['sessions'][-2][1]=True  # Nov 2 closure is integral provenance.

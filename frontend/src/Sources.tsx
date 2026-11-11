@@ -8,8 +8,11 @@ export function sourceLimitations(source: Source): string[] {
   if (source.details?.historical_coverage === 'feed_window_only') {
     reasons.push('RSS recente; cobertura de três meses não garantida.');
   }
-  const code = source.reason || source.error;
-  if (code) reasons.push(label(code));
+  for (const code of [source.reason, source.error]) {
+    if (!code) continue;
+    const message = label(code);
+    if (!reasons.includes(message)) reasons.push(message);
+  }
   return reasons.length ? reasons : ['Cobertura histórica não confirmada. Consulte os detalhes da fonte.'];
 }
 

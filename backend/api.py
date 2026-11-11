@@ -24,6 +24,8 @@ from .execution_mode import resolve_mode, ANALYSIS_KINDS
 from .operations import manual_slot, manual_quota
 from .operations import worker_state, collection_state, job_admission
 from .session_continuity import calendar_status
+from .source_status import provider_state_at, latest_clock
+from .worker import load_source_definitions
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -70,6 +72,94 @@ def ai_status():
     return status()
 
 
+def expected_price_session(store, as_of):
+    """A verified closed session, never a wall-clock age approximation."""
+    from .session_continuity import calendar_context
+    from .market_calendar import validate_package_envelope
+    try:
+        _, envelope = calendar_context(store, [], as_of)
+        if envelope is None:
+            return None
+        rows = validate_package_envelope(envelope, as_of)
+        cutoff = instant(as_of)
+        today = cutoff.astimezone(SAO_PAULO).date()
+        known = {row['session_date']: row for row in rows}
+        closed = [row['session_date'] for row in rows
+                  if row['session_date'] <= today.isoformat() and row['is_open']
+                  and instant(row['closes_at']) < cutoff]
+        if not closed:
+            return None
+        expected = max(closed)
+        first = __import__('datetime').date.fromisoformat(expected)
+        if any((first + timedelta(days=i)).isoformat() not in known
+               for i in range((today-first).days + 1)):
+            return None
+        return expected
+    except (ValueError, TypeError, KeyError, OverflowError):
+        return None
+
+
+def price_freshness(price, session_date, expected, complete=False):
+    if price is None:
+        return 'missing'
+    if expected is None or not session_date:
+        return 'unknown'
+    if session_date < expected:
+        return 'stale'
+    if session_date == expected and complete:
+        return 'fresh'
+    return 'unknown'
+
+
+def coverage_resolution(store, coverage, assets, as_of):
+    """Add scoped diagnostics without reinterpreting archived presence counts."""
+    eligible = [a for a in assets if a['eligible']]
+    temporal = {state: sum(a['price_freshness'] == state for a in eligible)
+                for state in ('fresh', 'stale', 'unknown', 'missing')}
+    rows = store.rows("SELECT updated_at,result_json FROM jobs WHERE kind='catalog' "
+                      "AND status='succeeded' AND updated_at<=? ORDER BY updated_at DESC,job_id DESC LIMIT 1", (iso(as_of),))
+    receipt = None
+    if rows:
+        try:
+            result = json.loads(rows[0]['result_json'])
+            received = result.get('received')
+            if type(received) is int and received >= 0 and result.get('provider_catalog_complete') is True:
+                receipt = {'completed_at': rows[0]['updated_at'], 'received_records': received,
+                           'scope': 'provider_reported_completed_run_not_membership_snapshot'}
+        except (ValueError, TypeError, AttributeError):
+            pass
+    limitations = [
+        'Catálogo acumulado: ativos ausentes do último lote não são desativados; composição atual não confirmada por snapshot completo.',
+        'Contagens históricas e lista de preços são leituras independentes; os estados de frescor usam o denominador da própria lista, não um snapshot conjunto.',
+        f'Preços no corte, entre {len(eligible)} elegíveis desta leitura: {temporal["fresh"]} elegíveis com sessão encerrada presente, {temporal["stale"]} antigos, {temporal["unknown"]} sem frescor confirmado e {temporal["missing"]} sem preço visível. Presença não certifica adequação financeira.',
+    ]
+    if receipt:
+        limitations.append(f'Último lote de catálogo concluído informou {receipt["received_records"]} registros; isso não identifica a composição atual nem substitui o total acumulado.')
+    return {'known_gaps': limitations,
+            'price_presence_scope': 'archived_records_not_period_coverage',
+            'price_freshness_as_of': iso(as_of),
+            'eligible_price_freshness': temporal,
+            'eligible_price_freshness_denominator': len(eligible),
+            'coverage_read_consistency': 'price_states_share_list_denominator_not_archived_counts_snapshot',
+            'eligible_assets_with_price_usable_at_cutoff': temporal['fresh'],
+            'price_usable_scope': 'ended_session_presence_not_financial_or_adjustment_adequacy',
+            'eligible_assets_with_partial_price_window': sum(a.get('price_window_status') == 'partial' for a in eligible),
+            'eligible_assets_with_unknown_price_window': sum(a.get('price_window_status') == 'unknown' for a in eligible),
+            'catalog_scope': 'accumulated_catalog_membership_not_reconciled',
+            'catalog_latest_completed_receipt': receipt,
+            'catalog_current_eligible_assets': None,
+            'catalog_membership_reason': 'complete_point_in_time_membership_snapshot_unavailable'}
+
+
+def fundamentals_coverage_gap(coverage):
+    count = coverage.get('eligible_assets_with_fundamentals')
+    if count is None:
+        return 'Cobertura de fundamentos não confirmada; presença e adequação precisam de verificação.'
+    if count == 0:
+        return 'Nenhum ativo elegível com registro de fundamentos; múltiplos não calculados.'
+    return f'Fundamentos parciais: {count} ativo(s) elegível(is) com registro; presença não comprova revisão, cobertura do período ou múltiplos calculáveis.'
+
+
 def create_app(database: str | Path | None = None, profile: str | None = None, execution_mode=None):
     mode = profile or os.environ.get('APP_MODE', 'real')
     process_mode = resolve_mode(execution_mode if execution_mode is not None else os.environ.get('RADAR_EXECUTION_MODE', 'collection-only' if database is None else 'analysis-enabled'))
@@ -104,7 +194,7 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
     app.state.store = store
     app.state.execution_mode = process_mode
     app.state.token = secrets.token_urlsafe(32)
-    source_defs = json.loads((ROOT / 'config/news-sources.json').read_text(encoding='utf-8'))['sources']
+    source_defs = load_source_definitions(ROOT / 'config')
     source_names = {s['id']: s['name'] for s in source_defs}
 
     @app.middleware('http')
@@ -225,9 +315,10 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
                            'articles': current_articles, 'updated_at': row['created_at']})
         return result
 
-    def asset_rows(events=None):
+    def asset_rows(events=None, as_of=None):
         from .price_vintages import price_projection
-        now=iso()
+        now=iso(as_of)
+        expected_session = expected_price_session(store, now)
         vintage_assets={row['asset_id'] for row in store.rows('SELECT DISTINCT asset_id FROM price_vintages WHERE available_at<=?',(now,))} if store.rows("SELECT 1 FROM sqlite_master WHERE name='price_vintages' AND type='table'") else set()
         event_counts = {}
         disclosed_dates = {}
@@ -253,7 +344,7 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
             analysis_states.setdefault(analysis['asset_id'], analysis['status'])
         result = []
         # Filter, sort and paginate the full catalogue, including late tickers.
-        for a in store.list_assets(limit=-1):
+        for a in store.list_assets(limit=-1, as_of=now):
             if not a['eligible'] and a['asset_type'] != 'unknown':
                 continue
             projection=price_projection(store,a,now) if a['asset_id'] in vintage_assets else None
@@ -264,9 +355,10 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
                          price_fetched_at=projection['snapshot']['fetched_at'])
             count = event_counts.get(a['asset_id'], 0)
             latest_discovery = last_discoveries.get(a['asset_id'])
-            stale = a['market_timestamp'] is None or datetime.now(timezone.utc) - instant(a['market_timestamp']) > timedelta(days=4)
-            if projection and a['session_date']:
-                stale=(instant(now).astimezone(SAO_PAULO).date()-__import__('datetime').date.fromisoformat(a['session_date'])).days>4
+            freshness = price_freshness(a['price'], a.get('session_date'), expected_session,
+                                        bool(projection and latest.get('complete_session')))
+            # Preserve the boolean contract conservatively; explicit state distinguishes unknown.
+            stale = freshness != 'fresh'
             price_flags=json.loads(a.get('price_quality_flags_json') or '[]')
             result.append({**a, 'id': a['asset_id'], 'type': a['asset_type'], 'price_at': a['market_timestamp'],
                            'price_timestamp_precision': 'date' if 'daily_bar_timestamp_not_trade_time' in price_flags else 'instant',
@@ -277,7 +369,9 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
                            'last_event_seen_date': latest_discovery[0].astimezone(SAO_PAULO).date().isoformat() if latest_discovery else None,
                            'last_event': latest_discovery[2] if latest_discovery else None,
                            'priority': None, 'evidence_quality': 'low' if count else 'unknown',
-                           'coverage': 'antiga' if stale and a['price'] is not None else ('parcial' if a['price'] is not None else 'ausente'),
+                           'price_freshness': freshness, 'expected_price_session': expected_session,
+                           'price_window_status': projection['snapshot']['window_coverage']['status'] if projection else 'unknown',
+                           'coverage': 'antiga' if freshness == 'stale' and a['price'] is not None else ('parcial' if a['price'] is not None else 'ausente'),
                            'analysis_state': analysis_states.get(a['asset_id'], 'indisponível'), 'stale': stale})
         return result
 
@@ -336,15 +430,17 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
         return {**manual, 'execution_mode': process_mode, 'worker': lease,
                 'job_control': job_admission(store, process_mode, now=now),
                 'mode_mismatch': lease['status'] == 'active' and lease['execution_mode'] != process_mode,
-                'ai': capabilities, 'collection': collection_state(store, [s['id'] for s in source_defs]),
+                'ai': capabilities, 'collection': collection_state(store, [s['id'] for s in source_defs], now=now),
                 'latest_analysis_snapshot': store.rows('SELECT MAX(as_of) AS latest FROM analyses')[0]['latest'],
                 'queried_at': now}
 
     @app.get('/api/v1/overview')
     def overview():
+        now = iso()
         c = store.coverage()
         events = event_rows()
-        market = asset_rows(events)
+        market = asset_rows(events, as_of=now)
+        c.update(coverage_resolution(store, c, market, now))
         jobs = store.list_jobs(500)
         last = None
         for candidate in jobs:
@@ -355,7 +451,6 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
                 last={**candidate,'status':'succeeded' if all(j['status']=='succeeded' for j in children) else 'partial',
                       'updated_at':max(j['updated_at'] for j in children)}
                 break
-        now = iso()
         return {'as_of': now, 'window_start': news_window(now)[0], 'mode': mode,
                 'counts': {'assets': c['eligible_assets'], 'priced': c['assets_with_prices'], 'articles': len(articles_for()), 'events': len(events), 'analysed': c['assets_analyzed'],
                            'pending': sum(j['kind'] in {'analyse','analysis'} and j['status'] in {'queued','running','retry_wait','paused','blocked'} for j in jobs)},
@@ -390,12 +485,20 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
         if projection is not None:
             return {'items':projection['bars'],'as_of':now,'missing_reason':None if projection['bars'] else 'Sem observações na janela',
                     'price_snapshot':projection['snapshot'],'current_price_metrics':projection['metrics']}
-        rows = store.rows('SELECT b.session_date AS date,b.provider,b.adjustment,r.* FROM price_bars b JOIN price_revisions r ON r.revision_id=b.latest_revision_id WHERE b.asset_id=? ORDER BY b.session_date', (asset_id,))
-        start,end=news_window(iso())
+        start,end=news_window(now)
         start_date=instant(start).astimezone(SAO_PAULO).date().isoformat()
         end_date=instant(end).astimezone(SAO_PAULO).date().isoformat()
-        rows=[r for r in rows if start_date<=r['date']<=end_date]
-        return {'items': rows, 'as_of': iso(), 'missing_reason': None if rows else 'Histórico não disponível'}
+        rows = store.rows("""SELECT b.session_date AS date,b.provider,b.adjustment,r.*
+            FROM price_bars b JOIN price_revisions r ON r.revision_id=(
+                SELECT candidate.revision_id FROM price_revisions candidate
+                WHERE candidate.bar_id=b.bar_id AND candidate.available_at<=?
+                    AND candidate.fetched_at<=?
+                    AND (candidate.market_timestamp IS NULL OR candidate.market_timestamp<=?)
+                ORDER BY candidate.available_at DESC,candidate.rowid DESC LIMIT 1)
+            WHERE b.asset_id=? AND b.session_date BETWEEN ? AND ?
+            ORDER BY b.session_date,b.provider,b.adjustment,b.bar_id""",
+            (now,now,now,asset_id,start_date,end_date))
+        return {'items': rows, 'as_of': now, 'missing_reason': None if rows else 'Histórico não disponível'}
 
     @app.get('/api/v1/assets/{asset_id}/analysis-job')
     def asset_analysis_job(asset_id: str):
@@ -598,9 +701,16 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
     @app.get('/api/v1/sources')
     def sources():
         from .price_vintages import vintage_status
-        captured=vintage_status(store,iso())
-        states = {p['provider_id']: p for p in store.rows('SELECT * FROM provider_state')}
-        scheduled = calendar_status(store,iso())
+        now = iso()
+        capture_error = None
+        try:
+            captured = vintage_status(store, now)
+        except (ValueError, TypeError, KeyError, OverflowError):
+            captured = None
+            capture_error = 'price_capture_invalid'
+        source_config = {s['id']: s for s in source_defs}
+        states = {p['provider_id']: provider_state_at(p, now, source_config.get(p['provider_id'])) for p in store.rows('SELECT * FROM provider_state')}
+        scheduled = calendar_status(store, now)
         definitions = source_defs + [{'id': x, 'name': n} for x,n in [('brapi_catalog','brapi · cadastro'),('brapi_prices','brapi · preços'),('gdelt_doc2','GDELT · descoberta'),('bcb_sgs','BCB · séries macro'),('cvm','CVM · documentos'),('market_calendar','Calendário de pregões'),('codex_cli','Codex CLI')]]
         known_ids={s['id'] for s in definitions}
         definitions += [{'id': key,'name':source_names.get(key.split(':')[0],key)+' · descoberta GDELT'} for key in states if key not in known_ids and key.endswith(':gdelt')]
@@ -609,24 +719,51 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
             p = states.get(s['id'], {})
             result.append({'id': s['id'], 'name': s['name'], 'status': p.get('status','not_tested'),
                            'last_attempt_at': p.get('last_attempt_at'), 'last_success_at': p.get('last_success_at'),
-                           'error': p.get('error_code'), 'reason': p.get('error_code'), 'next_attempt_at':p.get('next_attempt_at'),
+                           'error': p.get('error_code'), 'reason': p.get('clock_error') or p.get('error_code'), 'next_attempt_at':p.get('next_attempt_at'),
                            'details': json.loads(p.get('details_json','{}')), 'count': store.rows('SELECT COUNT(*) n FROM articles WHERE source_id=?',(s['id'],))[0]['n']})
             if s['id']=='market_calendar' and scheduled is not None:
                 result[-1].update({key:scheduled[key] for key in ('status','reason','details','available_start','available_end','count','capability')})
-                result[-1].update(error=scheduled['error_code'],last_success_at=scheduled['available_at'],
+                result[-1].update(error=(p.get('error_code') if p.get('clock_error') else scheduled['error_code']),last_success_at=scheduled['available_at'],
                                   next_attempt_at=scheduled['next_attempt_at'])
             if s['id']=='brapi_prices' and captured is not None:
+                # Acquisition history and the latest provider attempt are separate.
+                # A preserved capture must not make a later failed request look healthy.
                 result[-1].update(captured)
-        return {'items': result, 'as_of': iso()}
+                result[-1]['details'] = {**json.loads(p.get('details_json','{}')), **captured['details']}
+                attempt = p.get('last_attempt_at')
+                later_attempt = p and (not attempt or instant(attempt) >= instant(captured['last_success_at']))
+                if later_attempt:
+                    result[-1]['last_success_at'] = latest_clock((p.get('last_success_at'), captured['last_success_at']), now)
+                    if p.get('error_code') or p.get('status') not in {'available','partial'}:
+                        result[-1].update(status=p.get('status','unavailable'),
+                                          reason=p.get('error_code') or p.get('status'))
+                elif attempt:
+                    # A newer valid acquisition supersedes an older failure only
+                    # in this projection; retain the historical provider row.
+                    result[-1].update(error=None,next_attempt_at=None)
+            if p.get('clock_error'):
+                result[-1]['reason'] = p['clock_error']
+                result[-1]['details']['invalid_clock_fields'] = p['invalid_clock_fields']
+                if p.get('error_code') == p['clock_error']:
+                    result[-1]['error'] = p['clock_error']
+                    if s['id'] != 'market_calendar':
+                        result[-1]['status'] = 'unavailable'
+            if s['id']=='brapi_prices' and capture_error:
+                # No fallback to older captures or zero counts after corruption.
+                result[-1].update(status='unavailable', error=capture_error, reason=capture_error,
+                                  count=None, last_success_at=None)
+        return {'items': result, 'as_of': now}
 
     @app.get('/api/v1/coverage')
     def coverage():
+        now = iso()
         c=store.coverage()
-        scheduled = calendar_status(store,iso())
+        c.update(coverage_resolution(store, c, asset_rows(as_of=now), now))
+        scheduled = calendar_status(store,now)
         calendar_gap = scheduled['reason'] if scheduled is not None else 'Ajustes e calendário de pregões ainda precisam de homologação.'
-        return {**c, 'archived_articles':c['articles'], 'articles':len(articles_for()), 'events':len(event_rows()), 'as_of': iso(), 'partitions': store.rows('SELECT * FROM coverage_partitions ORDER BY start_at DESC LIMIT 500'),
+        return {**c, 'archived_articles':c['articles'], 'articles':len(articles_for()), 'events':len(event_rows()), 'as_of': now, 'partitions': store.rows('SELECT * FROM coverage_partitions ORDER BY start_at DESC LIMIT 500'),
                 'quotas': store.rows('SELECT provider,period,SUM(units) used FROM quota_ledger WHERE status<>\'released\' GROUP BY provider,period'),
-                'known_gaps': ['RSS não garante três meses de arquivo.', calendar_gap, 'Fundamentos CVM indisponíveis; múltiplos não calculados.'] + ([ai_capabilities()['reason']] if not ai_capabilities()['enabled'] else [])}
+                'known_gaps': c['known_gaps'] + ['RSS não garante três meses de arquivo.', calendar_gap, fundamentals_coverage_gap(c)] + ([ai_capabilities()['reason']] if not ai_capabilities()['enabled'] else [])}
 
     @app.get('/api/v1/watchlist')
     def watchlist():
