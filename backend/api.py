@@ -211,9 +211,14 @@ def create_app(database: str | Path | None = None, profile: str | None = None, e
         if request.method in {'POST', 'PATCH', 'PUT', 'DELETE'}:
             if not secrets.compare_digest(request.headers.get('x-radar-token', ''), app.state.token):
                 return JSONResponse({'detail': 'Sessão local expirada; recarregue a página'}, status_code=403)
+            # Without a declared length the 100 kB cap below cannot be enforced before parsing.
+            if 'transfer-encoding' in request.headers:
+                return JSONResponse({'detail': 'Tamanho do comando deve ser declarado'}, status_code=411)
             try:
                 length = int(request.headers.get('content-length', '0'))
             except ValueError:
+                return JSONResponse({'detail': 'Tamanho inválido'}, status_code=400)
+            if length < 0:
                 return JSONResponse({'detail': 'Tamanho inválido'}, status_code=400)
             if length > 100_000:
                 return JSONResponse({'detail': 'Comando muito grande'}, status_code=413)

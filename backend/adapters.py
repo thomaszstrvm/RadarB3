@@ -45,6 +45,9 @@ def feed_publication_time(raw_date):
 
 
 def parse_feed(body: bytes, source: dict, fetched_at=None, feed_url=None, content_type=None) -> list[dict]:
+    # UTF-16/UTF-32 hide "<!DOCTYPE" from the byte search below; accept ASCII-compatible encodings only.
+    if b"\x00" in body or body[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        raise FetchError("unsupported_feed_charset")
     if b"<!DOCTYPE" in body.upper() or b"<!ENTITY" in body.upper():
         raise FetchError("xml_entities_disallowed")
     if content_type:
